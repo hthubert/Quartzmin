@@ -18,6 +18,8 @@ namespace Quartz.Plugins.RecentHistory
         public bool Vetoed { get; set; }
         public DateTime? FinishedTimeUtc { get; set; }
         public string ExceptionMessage { get; set; }
+        public string ExceptionDetail { get; set; }
+
     }
 
     public interface IExecutionHistoryStore
