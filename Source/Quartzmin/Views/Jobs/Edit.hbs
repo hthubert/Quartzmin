@@ -1,8 +1,8 @@
 ﻿{{!<Layout}}
 {{#if Model.Job.IsNew}}
-    {{ViewBag Title='Add Job'}}
+    {{ViewBag Title='新建任务'}}
 {{else}}
-    {{ViewBag Title='Edit Job'}}
+    {{ViewBag Title='编辑任务'}}
 {{/if}}
 
 <div class="ui inverted page dimmer" id="dimmer"><div class="ui loader"></div></div>
@@ -24,7 +24,7 @@
             </div>
         </div>
         <h1 class="ui left floated header">
-            {{#if Model.Job.IsNew}}Add Job{{else}}Edit Job "{{Model.Job.JobName}}"{{/if}}
+            {{#if Model.Job.IsNew}}新建任务{{else}}编辑任务 "{{Model.Job.JobName}}"{{/if}}
         </h1>
     </div>
 

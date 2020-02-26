@@ -11,12 +11,12 @@ namespace Quartz.Plugins.RecentHistory.Impl
     {
         public string SchedulerName { get; set; }
 
-        Dictionary<string, ExecutionHistoryEntry> _data = new Dictionary<string, ExecutionHistoryEntry>();
-
-        DateTime _nextPurgeTime = DateTime.UtcNow;
-        int _updatesFromLastPurge;
-
-        int _totalJobsExecuted = 0, _totalJobsFailed = 0;
+        [NonSerialized]
+        private readonly Dictionary<string, ExecutionHistoryEntry> _data = new Dictionary<string, ExecutionHistoryEntry>();
+        [NonSerialized]
+        private DateTime _nextPurgeTime = DateTime.UtcNow;
+        private int _updatesFromLastPurge;
+        private int _totalJobsExecuted = 0, _totalJobsFailed = 0;
 
         public Task<ExecutionHistoryEntry> Get(string fireInstanceId)
         {
