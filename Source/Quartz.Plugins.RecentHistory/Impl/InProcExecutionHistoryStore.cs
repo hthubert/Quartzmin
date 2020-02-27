@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Quartz.Plugins.RecentHistory.Impl
 {
-    [Serializable]
     public class InProcExecutionHistoryStore : IExecutionHistoryStore
     {
         public string SchedulerName { get; set; }
+        public string DataPath { get; set; }
 
         [NonSerialized]
         private readonly Dictionary<string, ExecutionHistoryEntry> _data = new Dictionary<string, ExecutionHistoryEntry>();
@@ -67,7 +67,7 @@ namespace Quartz.Plugins.RecentHistory.Impl
                 IEnumerable<ExecutionHistoryEntry> result = _data.Values
                     .Where(x => x.SchedulerName == SchedulerName)
                     .GroupBy(x => x.Job)
-                    .Select(x => x.OrderByDescending(y => y.ActualFireTimeUtc).Take(limitPerJob).Reverse())
+                    .Select(x => x.OrderByDescending(y => y.ActualFireTime).Take(limitPerJob).Reverse())
                     .SelectMany(x => x).ToArray();
                 return Task.FromResult(result);
             }
@@ -80,7 +80,7 @@ namespace Quartz.Plugins.RecentHistory.Impl
                 IEnumerable<ExecutionHistoryEntry> result = _data.Values
                     .Where(x => x.SchedulerName == SchedulerName)
                     .GroupBy(x => x.Trigger)
-                    .Select(x => x.OrderByDescending(y => y.ActualFireTimeUtc).Take(limitPerTrigger).Reverse())
+                    .Select(x => x.OrderByDescending(y => y.ActualFireTime).Take(limitPerTrigger).Reverse())
                     .SelectMany(x => x).ToArray();
                 return Task.FromResult(result);
             }
@@ -92,7 +92,7 @@ namespace Quartz.Plugins.RecentHistory.Impl
             {
                 IEnumerable<ExecutionHistoryEntry> result = _data.Values
                     .Where(x => x.SchedulerName == SchedulerName)
-                    .OrderByDescending(y => y.ActualFireTimeUtc).Take(limit).Reverse().ToArray();
+                    .OrderByDescending(y => y.ActualFireTime).Take(limit).Reverse().ToArray();
                 return Task.FromResult(result);
             }
         }
@@ -116,6 +116,14 @@ namespace Quartz.Plugins.RecentHistory.Impl
         {
             Interlocked.Increment(ref _totalJobsFailed);
             return Task.FromResult(0);
+        }
+
+        public void Initialize()
+        {
+        }
+
+        public void Shutdown()
+        {
         }
     }
 }

@@ -2,61 +2,112 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using LiteDB;
+using System.Linq;
+using System.Threading;
 
 namespace Quartz.Plugins.RecentHistory.Impl
 {
     class LiteDbExecutionHistoryStore : IExecutionHistoryStore
     {
+        class SummaryInfo
+        {
+            public ObjectId Id = ObjectId.NewObjectId();
+            public int TotalJobsExecuted;
+            public int TotalJobsFailed;
+        }
+
+        private LiteDatabase _database;
+        private ILiteCollection<ExecutionHistoryEntry> _histories;
+        private ILiteCollection<SummaryInfo> _summaries;
+        private SummaryInfo _info = new SummaryInfo();
+
         public string SchedulerName { get; set; }
+        public string DataPath { get; set; }
+
+        public void Initialize()
+        {
+            BsonMapper.Global.IncludeFields = true;
+            BsonMapper.Global.Entity<ExecutionHistoryEntry>().Id(x => x.FireInstanceId);
+            BsonMapper.Global.Entity<SummaryInfo>().Id(x => x.Id);
+           
+            _database = new LiteDatabase(DataPath);
+            _histories = _database.GetCollection<ExecutionHistoryEntry>("histories");
+            _histories.EnsureIndex(x => x.Job);
+            _histories.EnsureIndex(x => x.ActualFireTime);
+            _summaries = _database.GetCollection<SummaryInfo>("summaries");
+            if (_summaries.Count() > 0)
+            {
+                _info = _summaries.Query().First();
+            }
+        }
+        public void Shutdown()
+        {
+            _summaries.Upsert(_info);
+            _database.Dispose();
+         }
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLast(int limit)
         {
-            throw new NotImplementedException();
+            IEnumerable<ExecutionHistoryEntry> result = _histories.Query()
+                .OrderByDescending(y => y.ActualFireTime)
+                .Limit(limit)
+                .ToArray();
+            return Task.FromResult(result);
         }
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLastOfEveryJob(int limitPerJob)
         {
-            throw new NotImplementedException();
+            var jobs = _histories.Query().GroupBy("$.Job").Select("Last(*)").ToArray();
+            foreach (var item in jobs)
+            {
+
+            }
+            return Task.FromResult((IEnumerable<ExecutionHistoryEntry>)Array.Empty<ExecutionHistoryEntry>());
         }
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLastOfEveryTrigger(int limitPerTrigger)
         {
-            throw new NotImplementedException();
+            return Task.FromResult((IEnumerable<ExecutionHistoryEntry>)Array.Empty<ExecutionHistoryEntry>());
         }
 
         public Task<ExecutionHistoryEntry> Get(string fireInstanceId)
         {
-            throw new NotImplementedException();
+            var result = _histories.FindOne(x => x.FireInstanceId == fireInstanceId);
+            return Task.FromResult(result);
         }
 
         public Task<int> GetTotalJobsExecuted()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_info.TotalJobsExecuted);
         }
 
         public Task<int> GetTotalJobsFailed()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_info.TotalJobsFailed);
         }
 
         public Task IncrementTotalJobsExecuted()
         {
-            throw new NotImplementedException();
+            Interlocked.Increment(ref _info.TotalJobsExecuted);
+            return Task.FromResult(0);
         }
 
         public Task IncrementTotalJobsFailed()
         {
-            throw new NotImplementedException();
+            Interlocked.Increment(ref _info.TotalJobsFailed);
+            return Task.FromResult(0);
         }
 
         public Task Purge()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(0);
         }
 
         public Task Save(ExecutionHistoryEntry entry)
         {
-            throw new NotImplementedException();
+            _histories.Upsert(entry);
+            return Task.FromResult(0);
         }
     }
 }

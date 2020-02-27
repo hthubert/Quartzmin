@@ -8,10 +8,11 @@ namespace Quartz.Plugins.RecentHistory
 {
     public class ExecutionHistoryPlugin : ISchedulerPlugin, IJobListener
     {
-        IScheduler _scheduler;
-        IExecutionHistoryStore _store;
+        private IScheduler _scheduler;
+        private IExecutionHistoryStore _store;
 
         public string Name { get; set; }
+        public string DataPath { get; set; }
         public Type StoreType { get; set; }
 
         public Task Initialize(string pluginName, IScheduler scheduler, CancellationToken cancellationToken = default(CancellationToken))
@@ -34,17 +35,20 @@ namespace Quartz.Plugins.RecentHistory
 
                 if (_store == null)
                     throw new Exception(nameof(StoreType) + " is not set.");
-
+                
                 _scheduler.Context.SetExecutionHistoryStore(_store);
             }
 
             _store.SchedulerName = _scheduler.SchedulerName;
+            _store.DataPath = DataPath;
+            _store.Initialize();
 
             await _store.Purge();
         }
 
         public Task Shutdown(CancellationToken cancellationToken = default(CancellationToken))
         {
+            _store.Shutdown();
             return Task.FromResult(0);
         }
 
@@ -55,8 +59,8 @@ namespace Quartz.Plugins.RecentHistory
                 FireInstanceId = context.FireInstanceId,
                 SchedulerInstanceId = context.Scheduler.SchedulerInstanceId,
                 SchedulerName = context.Scheduler.SchedulerName,
-                ActualFireTimeUtc = context.FireTimeUtc.UtcDateTime,
-                ScheduledFireTimeUtc = context.ScheduledFireTimeUtc?.UtcDateTime,
+                ActualFireTime = context.FireTimeUtc.LocalDateTime,
+                ScheduledFireTime = context.ScheduledFireTimeUtc?.LocalDateTime,
                 Recovering = context.Recovering,
                 Job = context.JobDetail.Key.ToString(),
                 Trigger = context.Trigger.Key.ToString(),
@@ -69,7 +73,7 @@ namespace Quartz.Plugins.RecentHistory
             var entry = await _store.Get(context.FireInstanceId);
             if (entry != null)
             {
-                entry.FinishedTimeUtc = DateTime.UtcNow;
+                entry.FinishedTime = DateTime.Now;
                 var exception = jobException?.GetBaseException();
                 if (exception != null)
                 {

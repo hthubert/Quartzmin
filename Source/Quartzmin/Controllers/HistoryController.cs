@@ -32,10 +32,10 @@ namespace Quartzmin.Controllers
 
             var list = new List<object>();
 
-            foreach (var h in history.OrderByDescending(x => x.ActualFireTimeUtc))
+            foreach (var h in history.OrderByDescending(x => x.ActualFireTime))
             {
                 string state = "Finished", icon = "check";
-                var endTime = h.FinishedTimeUtc;
+                var endTime = h.FinishedTime;
 
                 if (h.Vetoed)
                 {
@@ -47,7 +47,7 @@ namespace Quartzmin.Controllers
                     state = "Failed";
                     icon = "close";
                 }
-                else if (h.FinishedTimeUtc == null)
+                else if (h.FinishedTime == null)
                 {
                     state = "Running";
                     icon = "play";
@@ -66,10 +66,10 @@ namespace Quartzmin.Controllers
                     TriggerGroup = triggerKey[0],
                     TriggerName = triggerKey[1],
 
-                    ScheduledFireTimeUtc = h.ScheduledFireTimeUtc?.ToDefaultFormat(),
-                    ActualFireTimeUtc = h.ActualFireTimeUtc.ToDefaultFormat(),
-                    FinishedTimeUtc = h.FinishedTimeUtc?.ToDefaultFormat(),
-                    Duration = (endTime - h.ActualFireTimeUtc)?.ToString("hh\\:mm\\:ss"),
+                    ScheduledFireTimeUtc = h.ScheduledFireTime?.ToDefaultFormat(),
+                    ActualFireTimeUtc = h.ActualFireTime.ToDefaultFormat(),
+                    FinishedTimeUtc = h.FinishedTime?.ToDefaultFormat(),
+                    Duration = (endTime - h.ActualFireTime)?.ToString("hh\\:mm\\:ss"),
                     State = state,
                     StateIcon = icon,
                 });

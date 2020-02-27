@@ -434,12 +434,12 @@ namespace Quartzmin
                 string cssClass = "";
                 string state = "Finished";
 
-                if (entry.FinishedTimeUtc != null)
-                    duration = entry.FinishedTimeUtc - entry.ActualFireTimeUtc;
+                if (entry.FinishedTime != null)
+                    duration = entry.FinishedTime - entry.ActualFireTime;
 
-                if (entry.Vetoed == false && entry.FinishedTimeUtc == null) // still running
+                if (entry.Vetoed == false && entry.FinishedTime == null) // still running
                 {
-                    duration = DateTime.UtcNow - entry.ActualFireTimeUtc;
+                    duration = DateTime.UtcNow - entry.ActualFireTime;
                     cssClass = "running";
                     state = "Running";
                 }
@@ -459,14 +459,14 @@ namespace Quartzmin
                 if (duration != null)
                     durationHtml = $"<br>Duration: <b>{duration.ToNiceFormat()}</b>";
 
-                if (entry.ScheduledFireTimeUtc != null)
-                    delayHtml = $"<br>Delay: <b>{(entry.ActualFireTimeUtc - entry.ScheduledFireTimeUtc).ToNiceFormat()}</b>";
+                if (entry.ScheduledFireTime != null)
+                    delayHtml = $"<br>Delay: <b>{(entry.ActualFireTime - entry.ScheduledFireTime).ToNiceFormat()}</b>";
 
                 if (detailed)
                     detailsHtml = $"Job: <b>{entry.Job}</b><br>Trigger: <b>{entry.Trigger}</b><br>";
 
                 hst.AddBar(duration?.TotalSeconds ?? 1, 
-                    $"{detailsHtml}Fired: <b>{entry.ActualFireTimeUtc.ToDefaultFormat()} UTC</b>{durationHtml}{delayHtml}"+
+                    $"{detailsHtml}Fired: <b>{entry.ActualFireTime.ToDefaultFormat()} UTC</b>{durationHtml}{delayHtml}"+
                     $"<br>State: <b>{state}</b>{errorHtml}",
                     cssClass);
             }
