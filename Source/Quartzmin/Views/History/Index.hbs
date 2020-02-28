@@ -35,9 +35,17 @@
             <td>{{Duration}}</td>
         </tr>
         {{#if Entity.ExceptionMessage}}
-        <tr class="error-row">
+        <tr>
             <td colspan="6">
-                <p>{{Entity.ExceptionDetail}}</p>
+                <div class="ui accordion">
+                    <div class="title">
+                        <i class="dropdown icon"></i>
+                        {{Entity.ExceptionMessage}}
+                    </div>
+                    <div class="content">
+                        <textarea readonly="readonly" cols="88" rows="10">{{Entity.ExceptionDetail}}</textarea>
+                    </div>
+                </div>
             </td>
         </tr>
         {{/if}}
