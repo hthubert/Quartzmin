@@ -1,5 +1,6 @@
 ﻿using Quartz;
 using Quartzmin.TypeHandlers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -43,6 +44,8 @@ namespace Quartzmin
             get => DateTimeSettings.DefaultTimeFormat;
             set => DateTimeSettings.DefaultTimeFormat = value;
         }
+
+        public List<Type> JobTypes { get; } = new List<Type>();
 
         public QuartzminOptions()
         {

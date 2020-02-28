@@ -11,6 +11,7 @@ namespace Quartzmin
         public Cache(Services services)
         {
             _services = services;
+            _jobTypes = _services.Options.JobTypes.Select(n => n.RemoveAssemblyDetails()).ToArray();
         }
 
         private string[] _jobTypes;
@@ -18,23 +19,23 @@ namespace Quartzmin
         {
             get
             {
-                if (_jobTypes == null)
-                {
-                    lock (this)
-                    {
-                        if (_jobTypes == null)
-                        {
-                            var keys = _services.Scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup()).GetAwaiter().GetResult();
-                            var knownTypes = new List<string>();
-                            foreach (var key in keys)
-                            {
-                                var detail = _services.Scheduler.GetJobDetail(key).GetAwaiter().GetResult();
-                                knownTypes.Add(detail.JobType.RemoveAssemblyDetails());
-                            }
-                            UpdateJobTypes(knownTypes);
-                        }
-                    }
-                }
+                //if (_jobTypes == null)
+                //{
+                //    lock (this)
+                //    {
+                //        if (_jobTypes == null)
+                //        {
+                //            var keys = _services.Scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup()).GetAwaiter().GetResult();
+                //            var knownTypes = new List<string>();
+                //            foreach (var key in keys)
+                //            {
+                //                var detail = _services.Scheduler.GetJobDetail(key).GetAwaiter().GetResult();
+                //                knownTypes.Add(detail.JobType.RemoveAssemblyDetails());
+                //            }
+                //            UpdateJobTypes(knownTypes);
+                //        }
+                //    }
+                //}
                 return _jobTypes;
             }
         }

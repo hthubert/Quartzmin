@@ -3,6 +3,7 @@ using Quartz.Spi;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 #if NETSTANDARD
 using Microsoft.AspNetCore.Hosting;
@@ -21,12 +22,15 @@ namespace Quartzmin.SelfHost
         public string Logo { get; set; }
         public string ProductName { get; set; }
 
+        public List<Type> JobTypes { get; } = new List<Type>();
+
         private IScheduler _scheduler;
         private IDisposable _webApp;
 
         public Task Initialize(string pluginName, IScheduler scheduler, CancellationToken cancellationToken = default(CancellationToken))
         {
             _scheduler = scheduler;
+            _scheduler.Context.SetQuartzminPlugin(this);
             return Task.FromResult(0);
         }
 
@@ -71,6 +75,7 @@ namespace Quartzmin.SelfHost
             {
                 Scheduler = _scheduler,
             };
+            options.JobTypes.AddRange(JobTypes);
 
             if (!string.IsNullOrEmpty(DefaultDateFormat))
                 options.DefaultDateFormat = DefaultDateFormat;

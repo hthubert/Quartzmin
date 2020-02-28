@@ -30,10 +30,11 @@ namespace Quartz.Plugins.RecentHistory.Impl
             BsonMapper.Global.IncludeFields = true;
             BsonMapper.Global.Entity<ExecutionHistoryEntry>().Id(x => x.FireInstanceId);
             BsonMapper.Global.Entity<SummaryInfo>().Id(x => x.Id);
-           
+
             _database = new LiteDatabase(DataPath);
             _histories = _database.GetCollection<ExecutionHistoryEntry>("histories");
             _histories.EnsureIndex(x => x.Job);
+            _histories.EnsureIndex(x => x.Trigger);
             _histories.EnsureIndex(x => x.ActualFireTime);
             _summaries = _database.GetCollection<SummaryInfo>("summaries");
             if (_summaries.Count() > 0)
@@ -45,7 +46,7 @@ namespace Quartz.Plugins.RecentHistory.Impl
         {
             _summaries.Upsert(_info);
             _database.Dispose();
-         }
+        }
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLast(int limit)
         {
@@ -58,17 +59,39 @@ namespace Quartz.Plugins.RecentHistory.Impl
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLastOfEveryJob(int limitPerJob)
         {
-            var jobs = _histories.Query().GroupBy("$.Job").Select("Last(*)").ToArray();
+            var result = new List<ExecutionHistoryEntry>();
+            var jobs = _histories.Query().GroupBy("$.Job").Select("{job: Last(*.Job)}").ToArray();
             foreach (var item in jobs)
             {
+                string job = item.Values.First();
+                var items = _histories.Query()
+                                    .Where(n => n.Job == job)
+                                    .OrderByDescending(n => n.ActualFireTime)
+                                    .Limit(limitPerJob)
+                                    .ToList();
+                items.Reverse();
+                result.AddRange(items);
 
             }
-            return Task.FromResult((IEnumerable<ExecutionHistoryEntry>)Array.Empty<ExecutionHistoryEntry>());
+            return Task.FromResult((IEnumerable<ExecutionHistoryEntry>)result);
         }
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLastOfEveryTrigger(int limitPerTrigger)
         {
-            return Task.FromResult((IEnumerable<ExecutionHistoryEntry>)Array.Empty<ExecutionHistoryEntry>());
+            var result = new List<ExecutionHistoryEntry>();
+            var jobs = _histories.Query().GroupBy("$.Trigger").Select("{trigger: Last(*.Trigger)}").ToArray();
+            foreach (var item in jobs)
+            {
+                string trigger = item.Values.First();
+                var items = _histories.Query()
+                                    .Where(n => n.Trigger == trigger)
+                                    .OrderByDescending(n => n.ActualFireTime)
+                                    .Limit(limitPerTrigger)
+                                    .ToList();
+                items.Reverse();
+                result.AddRange(items);
+            }
+            return Task.FromResult((IEnumerable<ExecutionHistoryEntry>)result);
         }
 
         public Task<ExecutionHistoryEntry> Get(string fireInstanceId)
