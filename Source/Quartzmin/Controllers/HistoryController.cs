@@ -51,7 +51,7 @@ namespace Quartzmin.Controllers
                 {
                     state = "Running";
                     icon = "play";
-                    endTime = DateTime.UtcNow;
+                    endTime = DateTime.Now;
                 }
 
                 var jobKey = h.Job.Split('.');
@@ -66,9 +66,9 @@ namespace Quartzmin.Controllers
                     TriggerGroup = triggerKey[0],
                     TriggerName = triggerKey[1],
 
-                    ScheduledFireTimeUtc = h.ScheduledFireTime?.ToDefaultFormat(),
-                    ActualFireTimeUtc = h.ActualFireTime.ToDefaultFormat(),
-                    FinishedTimeUtc = h.FinishedTime?.ToDefaultFormat(),
+                    ScheduledFireTime = h.ScheduledFireTime?.ToDefaultFormat(),
+                    ActualFireTime = h.ActualFireTime.ToDefaultFormat(),
+                    FinishedTime = h.FinishedTime?.ToDefaultFormat(),
                     Duration = (endTime - h.ActualFireTime)?.ToString("hh\\:mm\\:ss"),
                     State = state,
                     StateIcon = icon,

@@ -38,8 +38,8 @@ namespace Quartzmin.Controllers
                     JobName = exec.JobDetail.Key.Name,
                     TriggerGroup = exec.Trigger.Key.Group,
                     TriggerName = exec.Trigger.Key.Name,
-                    ScheduledFireTime = exec.ScheduledFireTimeUtc?.UtcDateTime.ToDefaultFormat(),
-                    ActualFireTime = exec.FireTimeUtc.UtcDateTime.ToDefaultFormat(),
+                    ScheduledFireTime = exec.ScheduledFireTimeUtc?.LocalDateTime.ToDefaultFormat(),
+                    ActualFireTime = exec.FireTimeUtc.LocalDateTime.ToDefaultFormat(),
                     RunTime = exec.JobRunTime.ToString("hh\\:mm\\:ss")
                 });
             }

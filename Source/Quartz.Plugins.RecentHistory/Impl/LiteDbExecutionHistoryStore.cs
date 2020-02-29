@@ -50,11 +50,12 @@ namespace Quartz.Plugins.RecentHistory.Impl
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLast(int limit)
         {
-            IEnumerable<ExecutionHistoryEntry> result = _histories.Query()
+            var result = _histories.Query()
                 .OrderByDescending(y => y.ActualFireTime)
                 .Limit(limit)
-                .ToArray();
-            return Task.FromResult(result);
+                .ToList();
+            result.Reverse();
+            return Task.FromResult((IEnumerable<ExecutionHistoryEntry>)result);
         }
 
         public Task<IEnumerable<ExecutionHistoryEntry>> FilterLastOfEveryJob(int limitPerJob)

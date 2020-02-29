@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CronExpressionDescriptor;
 
 #region Target-Specific Directives
 #if NETSTANDARD
@@ -33,8 +34,7 @@ namespace Quartzmin.Controllers
                 var t = await GetTrigger(key);
                 var state = await Scheduler.GetTriggerState(key);
 
-                list.Add(new TriggerListItem()
-                {
+                list.Add(new TriggerListItem() {
                     Type = t.GetTriggerType(),
                     TriggerName = t.Key.Name,
                     TriggerGroup = t.Key.Group,
@@ -44,10 +44,10 @@ namespace Quartzmin.Controllers
                     JobName = t.JobKey.Name,
                     ScheduleDescription = t.GetScheduleDescription(),
                     History = Histogram.Empty,
-                    StartTime = t.StartTimeUtc.UtcDateTime.ToDefaultFormat(),
-                    EndTime = t.FinalFireTimeUtc?.UtcDateTime.ToDefaultFormat(),
-                    LastFireTime = t.GetPreviousFireTimeUtc()?.UtcDateTime.ToDefaultFormat(),
-                    NextFireTime = t.GetNextFireTimeUtc()?.UtcDateTime.ToDefaultFormat(),
+                    StartTime = t.StartTimeUtc.LocalDateTime.ToDefaultFormat(),
+                    EndTime = t.FinalFireTimeUtc?.LocalDateTime.ToDefaultFormat(),
+                    LastFireTime = t.GetPreviousFireTimeUtc()?.LocalDateTime.ToDefaultFormat(),
+                    NextFireTime = t.GetNextFireTimeUtc()?.LocalDateTime.ToDefaultFormat(),
                     ClrType = t.GetType().Name,
                     Description = t.Description,
                 });
@@ -108,9 +108,9 @@ namespace Quartzmin.Controllers
                 model.TriggerName += " - Copy";
 
             // don't show start time in the past because rescheduling cause triggering missfire policies
-            model.StartTimeUtc = trigger.StartTimeUtc > DateTimeOffset.UtcNow ? trigger.StartTimeUtc.UtcDateTime.ToDefaultFormat() : null;
+            model.StartTime = trigger.StartTimeUtc > DateTimeOffset.UtcNow ? trigger.StartTimeUtc.LocalDateTime.ToDefaultFormat() : null;
 
-            model.EndTimeUtc = trigger.EndTimeUtc?.UtcDateTime.ToDefaultFormat();
+            model.EndTime = trigger.EndTimeUtc?.LocalDateTime.ToDefaultFormat();
 
             model.CalendarName = trigger.CalendarName;
             model.Description = trigger.Description;
@@ -146,7 +146,7 @@ namespace Quartzmin.Controllers
         {
             var triggerModel = model.Trigger;
             var jobDataMap = (await Request.GetJobDataMapForm()).GetModel(Services);
-            
+
             var result = new ValidationResult();
 
             model.Validate(result.Errors);
@@ -247,7 +247,12 @@ namespace Quartzmin.Controllers
 
             try
             {
-                desc = CronExpressionDescriptor.ExpressionDescriptor.GetDescription(cron);
+                desc = ExpressionDescriptor.GetDescription(cron, new Options() {
+                    Verbose = true,
+                    DayOfWeekStartIndexZero = false,
+                    Use24HourTimeFormat = true,
+                    Locale = "zh-Hans"
+                });
             }
             catch
             { }
@@ -293,8 +298,7 @@ namespace Quartzmin.Controllers
             var list = new List<object>();
             foreach (var key in keys)
             {
-                list.Add(new 
-                {
+                list.Add(new {
                     TriggerName = key.Name,
                     TriggerGroup = key.Group,
                     History = historyByTrigger.TryGet(key.ToString()).ToHistogram(),
@@ -304,7 +308,7 @@ namespace Quartzmin.Controllers
             return View(list);
         }
 
-        
+
         [HttpGet]
         public Task<IActionResult> Duplicate(string name, string group)
         {

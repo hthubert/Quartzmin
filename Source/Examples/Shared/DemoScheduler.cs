@@ -13,10 +13,8 @@ namespace Quartzmin
     {
         public static async Task<IScheduler> Create(bool start = true)
         {
-            var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
+            var scheduler = await StdSchedulerFactory.GetDefaultScheduler();           
             var plugin = scheduler.Context.GetQuartzminPlugin();
-            plugin.JobTypes.Add(typeof(DummyJob));
-            plugin.JobTypes.Add(typeof(DisallowConcurrentJob));
             plugin.JobTypes.Add(typeof(TushareJob));
             /*
             {

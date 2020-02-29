@@ -212,7 +212,7 @@ namespace Quartzmin.Controllers
             {
                 var triggers = await Scheduler.GetTriggersOfJob(key);
 
-                var nextFires = triggers.Select(x => x.GetNextFireTimeUtc()?.UtcDateTime).ToArray();
+                var nextFires = triggers.Select(x => x.GetNextFireTimeUtc()?.LocalDateTime).ToArray();
 
                 list.Add(new
                 {

@@ -12,6 +12,7 @@ using System.IO;
 using Quartz.Impl.Matchers;
 using Quartz.Plugins.RecentHistory;
 
+
 #region Target-Specific Directives
 #if NETSTANDARD
 using HttpRequest = Microsoft.AspNetCore.Http.HttpRequest;
@@ -62,7 +63,7 @@ namespace Quartzmin
 
         public static string ETag(this DateTime dateTime)
         {
-            long etagHash = dateTime.ToFileTimeUtc();
+            long etagHash = dateTime.ToFileTime();
             return '\"' + Convert.ToString(etagHash, 16) + '\"';
         }
 
@@ -295,7 +296,10 @@ namespace Quartzmin
         public static string GetScheduleDescription(this ITrigger trigger)
         {
             if (trigger is ICronTrigger cr)
-                return CronExpressionDescriptor.ExpressionDescriptor.GetDescription(cr.CronExpressionString);
+                return CronExpressionDescriptor.ExpressionDescriptor.GetDescription(cr.CronExpressionString, new CronExpressionDescriptor.Options() 
+                {
+                    DayOfWeekStartIndexZero = false, Locale = "zh-Hans", Use24HourTimeFormat = true
+                });
             if (trigger is IDailyTimeIntervalTrigger dt)
                 return GetScheduleDescription(dt);
             if (trigger is ISimpleTrigger st)
@@ -439,7 +443,7 @@ namespace Quartzmin
 
                 if (entry.Vetoed == false && entry.FinishedTime == null) // still running
                 {
-                    duration = DateTime.UtcNow - entry.ActualFireTime;
+                    duration = DateTime.Now - entry.ActualFireTime;
                     cssClass = "running";
                     state = "Running";
                 }
@@ -466,7 +470,7 @@ namespace Quartzmin
                     detailsHtml = $"Job: <b>{entry.Job}</b><br>Trigger: <b>{entry.Trigger}</b><br>";
 
                 hst.AddBar(duration?.TotalSeconds ?? 1, 
-                    $"{detailsHtml}Fired: <b>{entry.ActualFireTime.ToDefaultFormat()} UTC</b>{durationHtml}{delayHtml}"+
+                    $"{detailsHtml}Fired: <b>{entry.ActualFireTime.ToDefaultFormat()}</b>{durationHtml}{delayHtml}"+
                     $"<br>State: <b>{state}</b>{errorHtml}",
                     cssClass);
             }

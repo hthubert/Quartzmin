@@ -439,12 +439,12 @@ namespace Quartzmin.Models
 
         public string Description { get; set; }
 
-        public string StartTimeUtc { get; set; }
-        public string EndTimeUtc { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
 
-        public DateTime? GetStartTimeUtc() => ParseDateTime(StartTimeUtc);
+        public DateTime? GetStartTimeUtc() => ParseDateTime(StartTime)?.ToUniversalTime();
 
-        public DateTime? GetEndTimeUtc() => ParseDateTime(EndTimeUtc);
+        public DateTime? GetEndTimeUtc() => ParseDateTime(EndTime)?.ToUniversalTime();
 
         public Dictionary<string, string> TimeZoneList { get => TimeZoneInfo.GetSystemTimeZones().ToDictionary(); }
 
@@ -453,7 +453,7 @@ namespace Quartzmin.Models
             if (string.IsNullOrEmpty(value))
                 return null;
 
-            if (DateTime.TryParseExact(value, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var result) == false)
+            if (DateTime.TryParseExact(value, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result) == false)
                 return null;
 
             return result;

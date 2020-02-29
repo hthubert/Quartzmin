@@ -29,9 +29,9 @@
                 <a href="{{ActionUrl 'Edit' 'Jobs' group=JobGroup name=JobName}}">{{JobGroup}}.{{JobName}}</a>
             </td>
             <td><a href="{{ActionUrl 'Edit' 'Triggers' group=TriggerGroup name=TriggerName}}">{{TriggerGroup}}.{{TriggerName}}</a></td>
-            <td>{{ScheduledFireTimeUtc}}</td>
-            <td>{{ActualFireTimeUtc}}</td>
-            <td>{{FinishedTimeUtc}}</td>
+            <td>{{ScheduledFireTime}}</td>
+            <td>{{ActualFireTime}}</td>
+            <td>{{FinishedTime}}</td>
             <td>{{Duration}}</td>
         </tr>
         {{#if Entity.ExceptionMessage}}
