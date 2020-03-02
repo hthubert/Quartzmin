@@ -43,7 +43,7 @@ namespace Quartz.Plugins.RecentHistory
             _store.DataPath = DataPath;
             _store.Initialize();
 
-            await _store.Purge();
+            await Task.FromResult(0);
         }
 
         public Task Shutdown(CancellationToken cancellationToken = default(CancellationToken))

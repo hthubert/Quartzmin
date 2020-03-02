@@ -123,9 +123,9 @@ namespace Quartz.Plugins.RecentHistory.Impl
             return Task.FromResult(0);
         }
 
-        public Task Purge()
+        public Task<IEnumerable<string>> Purge()
         {
-            return Task.FromResult(0);
+            return Task.FromResult((IEnumerable<string>)Array.Empty<string>());
         }
 
         public Task Save(ExecutionHistoryEntry entry)

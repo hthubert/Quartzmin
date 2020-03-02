@@ -6,11 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 using Quartz.Impl;
+using Quartzmin;
 using Quartzmin.SelfHost;
 
 namespace QuartzminServer
 {
-    using static Helper;
+    using static QuartzminHelper;
     internal class Program
     {
         private static NameValueCollection LoadConfig()

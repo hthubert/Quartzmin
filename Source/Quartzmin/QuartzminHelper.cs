@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace QuartzminServer
+namespace Quartzmin
 {
-    internal static class Helper
+    public static class QuartzminHelper
     {
         public static string UserPath;
         public static string PwdPath;
 
-        static Helper()
+        static QuartzminHelper()
         {
             UserPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).Replace('\\', '/');
-            PwdPath = Path.GetDirectoryName(typeof(Helper).Assembly.Location).Replace('\\', '/');
+            PwdPath = Path.GetDirectoryName(typeof(QuartzminHelper).Assembly.Location).Replace('\\', '/');
         }
 
         public static string RelativeToAbs(string path)
@@ -21,9 +21,9 @@ namespace QuartzminServer
             return path.Replace("~", UserPath).Replace("`pwd`", PwdPath);
         }
 
-        public static Stream GetLogStream(string id, bool @readonly = false)
+        public static Stream GetLogStream(string fireInstanceId, bool @readonly = false)
         {
-            var file = Path.Combine(PwdPath, "logs", id + ".txt");
+            var file = Path.Combine(PwdPath, "logs", fireInstanceId + ".txt");
             if (@readonly)
             {
                 if (File.Exists(file))

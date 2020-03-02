@@ -32,7 +32,7 @@ namespace Quartz.Plugins.RecentHistory
 
         Task<ExecutionHistoryEntry> Get(string fireInstanceId);
         Task Save(ExecutionHistoryEntry entry);
-        Task Purge();
+        Task<IEnumerable<string>> Purge();
 
         Task<IEnumerable<ExecutionHistoryEntry>> FilterLastOfEveryJob(int limitPerJob);
         Task<IEnumerable<ExecutionHistoryEntry>> FilterLastOfEveryTrigger(int limitPerTrigger);
