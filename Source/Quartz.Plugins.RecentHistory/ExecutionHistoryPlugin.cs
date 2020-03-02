@@ -64,6 +64,7 @@ namespace Quartz.Plugins.RecentHistory
                 Recovering = context.Recovering,
                 Job = context.JobDetail.Key.ToString(),
                 Trigger = context.Trigger.Key.ToString(),
+                UseLog = context.MergedJobDataMap.GetBoolean("use_log")
             };
             await _store.Save(entry);
         }

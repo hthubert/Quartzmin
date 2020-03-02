@@ -20,6 +20,7 @@ using IActionResult = System.Web.Http.IHttpActionResult;
 
 namespace Quartzmin.Controllers
 {
+    using static QuartzminHelper;
     public class ExecutionsController : PageControllerBase
     {
         [HttpGet]
@@ -31,8 +32,8 @@ namespace Quartzmin.Controllers
 
             foreach (var exec in currentlyExecutingJobs)
             {
-                list.Add(new
-                {
+                var useLog = exec.MergedJobDataMap.GetBoolean(MapDataUseLog);
+                var item = new {
                     Id = exec.FireInstanceId,
                     JobGroup = exec.JobDetail.Key.Group,
                     JobName = exec.JobDetail.Key.Name,
@@ -40,8 +41,11 @@ namespace Quartzmin.Controllers
                     TriggerName = exec.Trigger.Key.Name,
                     ScheduledFireTime = exec.ScheduledFireTimeUtc?.LocalDateTime.ToDefaultFormat(),
                     ActualFireTime = exec.FireTimeUtc.LocalDateTime.ToDefaultFormat(),
-                    RunTime = exec.JobRunTime.ToString("hh\\:mm\\:ss")
-                });
+                    RunTime = exec.JobRunTime.ToString("hh\\:mm\\:ss"),
+                    UseLog = useLog,
+                    LogTail = useLog ? string.Join(Environment.NewLine, LogTail(exec.FireInstanceId)) : string.Empty
+                };
+                list.Add(item); 
             }
 
             return View(list);

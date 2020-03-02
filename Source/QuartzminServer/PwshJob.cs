@@ -18,28 +18,28 @@ namespace QuartzminServer
         {
             return Task.Run(() => {
                 var pwsh = context.MergedJobDataMap.GetString("pwsh");
-                var waitForExit = context.MergedJobDataMap.GetBoolean("wait_for_exit");
+                var waitForExit = context.MergedJobDataMap.GetBoolean(MapDataWaitForExit);
 
                 if (!File.Exists(pwsh))
                 {
                     throw new Exception("pwsh not found.");
                 }
-                var script = context.MergedJobDataMap.GetString("script");
-                if (!File.Exists(script))
+                var file = context.MergedJobDataMap.GetString(MapDataFile);
+                if (!File.Exists(file))
                 {
-                    throw new Exception("script not found.");
+                    throw new Exception($"{file} not found.");
                 }
-                var args = context.MergedJobDataMap.GetString("args");
-                var uselog = context.MergedJobDataMap.GetBoolean("use_log");
+                var args = context.MergedJobDataMap.GetString(MapDataArgs);
+                var uselog = context.MergedJobDataMap.GetBoolean(MapDataUseLog);
                 Action<string> action = null;
                 StreamWriter writer = null;
                 if (uselog && waitForExit)
                 {
                     writer = new StreamWriter(GetLogStream(context.FireInstanceId));
-                    writer.AutoFlush = context.MergedJobDataMap.GetBoolean("auto_flush");
+                    writer.AutoFlush = context.MergedJobDataMap.GetBoolean(MapDataAutoFlush);
                     action = (line) => writer.WriteLine(line);
                 }
-                var process = new ExternalCall(pwsh).Arguments($"").WinExecWithPipeAsync(action, action);
+                var process = new ExternalCall(pwsh).Arguments($"{file} {args}").WinExecWithPipeAsync(action, action);
                 if (waitForExit)
                 {
                     var ct = context.CancellationToken;

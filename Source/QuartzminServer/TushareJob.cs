@@ -9,6 +9,11 @@ using Quartz.Impl.Calendar;
 
 namespace QuartzminServer
 {
+    internal class JobLog 
+    {
+
+    }
+
     [DisallowConcurrentExecution]
     public class TushareJob : IJob
     {

@@ -14,6 +14,7 @@
             <th>Actual Fire Time</th>
             <th>Run Time</th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -24,6 +25,7 @@
             <td>{{ScheduledFireTime}}</td>
             <td>{{ActualFireTime}}</td>
             <td>{{RunTime}}</td>
+            <td>{{#if UseLog}}<a href="">log file</a>{{#else}}no log{{/if}}</td>
             <td style="text-align: right"><button class="ui super tiny red button btn-interrupt" data-id="{{Id}}"><i class="stop icon"></i>Interrupt</button></td>
         </tr>
         {{/each}}
