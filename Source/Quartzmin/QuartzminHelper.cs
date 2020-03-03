@@ -8,7 +8,7 @@ namespace Quartzmin
     public static class QuartzminHelper
     {
         public const string MapDataWaitForExit = "wait_for_exit";
-        public const string MapDataUseLog = "use_log";
+        public const string MapDataEnableLog = "enable_log";
         public const string MapDataFile = "file";
         public const string MapDataArgs = "args";
         public const string MapDataAutoFlush = "auto_flush";

@@ -32,7 +32,7 @@ namespace Quartzmin.Controllers
 
             foreach (var exec in currentlyExecutingJobs)
             {
-                var useLog = exec.MergedJobDataMap.GetBoolean(MapDataUseLog);
+                var useLog = exec.MergedJobDataMap.GetBoolean(MapDataEnableLog);
                 var item = new {
                     Id = exec.FireInstanceId,
                     JobGroup = exec.JobDetail.Key.Group,

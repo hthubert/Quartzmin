@@ -30,16 +30,13 @@ namespace QuartzminServer
                     throw new Exception($"{file} not found.");
                 }
                 var args = context.MergedJobDataMap.GetString(MapDataArgs);
-                var uselog = context.MergedJobDataMap.GetBoolean(MapDataUseLog);
-                Action<string> action = null;
-                StreamWriter writer = null;
-                if (uselog && waitForExit)
+                var enableLog = context.MergedJobDataMap.GetBoolean(MapDataEnableLog);
+                JobLogger logger = null;
+                if (enableLog && waitForExit)
                 {
-                    writer = new StreamWriter(GetLogStream(context.FireInstanceId));
-                    writer.AutoFlush = context.MergedJobDataMap.GetBoolean(MapDataAutoFlush);
-                    action = (line) => writer.WriteLine(line);
+                    logger = new JobLogger(context);
                 }
-                var process = new ExternalCall(pwsh).Arguments($"{file} {args}").WinExecWithPipeAsync(action, action);
+                var process = new ExternalCall(pwsh).Arguments($"{file} {args}").WinExecWithPipeAsync(logger?.StdOutput, logger?.ErrOutput);
                 if (waitForExit)
                 {
                     var ct = context.CancellationToken;
@@ -57,7 +54,7 @@ namespace QuartzminServer
                             break;
                         }
                     }
-                    writer?.Close();
+                    logger?.Dispose();
                 }
             }, context.CancellationToken);
         }
