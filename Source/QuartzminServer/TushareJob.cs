@@ -20,6 +20,7 @@ namespace QuartzminServer
         private const string CalendarName = "交易日历";
         private async Task UpdateCal(IJobExecutionContext context, TusharePro tushare) 
         {
+            var logger = new JobLogger(context);
             var (table, error) = await tushare.GetTradeCalendarAsync(DateTime.Today, DateTime.Today.AddMonths(6));
             if (error != null)
             {
@@ -37,8 +38,11 @@ namespace QuartzminServer
                 else
                 {
                     cal.AddExcludedDate(TusharePro.ToDateTime(row.Get("cal_date")));
+                    logger.Info($"{row.Get("cal_date")}");
                 }
             }
+            await Task.Delay(TimeSpan.FromMinutes(5));
+            logger.Dispose();
             await context.Scheduler.AddCalendar(CalendarName, cal, true, true);
         }
 

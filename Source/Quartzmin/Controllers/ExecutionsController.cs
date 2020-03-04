@@ -32,7 +32,7 @@ namespace Quartzmin.Controllers
 
             foreach (var exec in currentlyExecutingJobs)
             {
-                var useLog = exec.MergedJobDataMap.GetBoolean(MapDataEnableLog);
+                var enableLog = exec.MergedJobDataMap.GetBoolean(MapDataEnableLog);
                 var item = new {
                     Id = exec.FireInstanceId,
                     JobGroup = exec.JobDetail.Key.Group,
@@ -42,8 +42,8 @@ namespace Quartzmin.Controllers
                     ScheduledFireTime = exec.ScheduledFireTimeUtc?.LocalDateTime.ToDefaultFormat(),
                     ActualFireTime = exec.FireTimeUtc.LocalDateTime.ToDefaultFormat(),
                     RunTime = exec.JobRunTime.ToString("hh\\:mm\\:ss"),
-                    UseLog = useLog,
-                    LogTail = useLog ? string.Join(Environment.NewLine, LogTail(exec.FireInstanceId)) : string.Empty
+                    EnableLog = enableLog,
+                    LogTail = enableLog ? string.Join(Environment.NewLine, LogTail(exec.FireInstanceId)) : string.Empty
                 };
                 list.Add(item); 
             }

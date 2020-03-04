@@ -19,6 +19,7 @@
             <th>Actual Fire Time</th>
             <th>Finished Time</th>
             <th>Run Time</th>
+            <th>Log</th>
         </tr>
     </thead>
     <tbody>
@@ -33,10 +34,11 @@
             <td>{{ActualFireTime}}</td>
             <td>{{FinishedTime}}</td>
             <td>{{Duration}}</td>
+            <td>{{#if Entity.EnableLog}}<a href="{{ActionUrl 'Download' 'Logs' id=Entity.FireInstanceId}}" target="_blank">download</a>{{/if}}</td>
         </tr>
         {{#if Entity.ExceptionMessage}}
         <tr>
-            <td colspan="6">
+            <td colspan="7">
                 <div class="ui accordion">
                     <div class="title">
                         <i class="dropdown icon"></i>

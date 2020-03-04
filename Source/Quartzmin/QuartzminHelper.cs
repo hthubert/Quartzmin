@@ -12,7 +12,7 @@ namespace Quartzmin
         public const string MapDataFile = "file";
         public const string MapDataArgs = "args";
         public const string MapDataAutoFlush = "auto_flush";
-
+        public static string LogPath;
         public static string UserPath;
         public static string PwdPath;
 
@@ -20,6 +20,11 @@ namespace Quartzmin
         {
             UserPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).Replace('\\', '/');
             PwdPath = Path.GetDirectoryName(typeof(QuartzminHelper).Assembly.Location).Replace('\\', '/');
+            LogPath = Path.Combine(PwdPath, "logs");
+            if (!Directory.Exists(LogPath))
+            {
+                Directory.CreateDirectory(LogPath);
+            }
         }
 
         public static string RelativeToAbs(string path)
@@ -29,7 +34,7 @@ namespace Quartzmin
 
         public static Stream GetLogStream(string fireInstanceId, bool @readonly = false)
         {
-            var file = Path.Combine(PwdPath, "logs", fireInstanceId + ".txt");
+            var file = Path.Combine(LogPath, fireInstanceId + ".txt");
             if (@readonly)
             {
                 if (File.Exists(file))

@@ -33,6 +33,8 @@ namespace QuartzminServer
             var scheduler = await factory.GetScheduler(CancellationToken.None);
             var plugin = scheduler.Context.GetQuartzminPlugin();
             plugin.JobTypes.Add(typeof(TushareJob));
+            plugin.JobTypes.Add(typeof(PwshJob));
+            plugin.JobTypes.Add(typeof(DotnetJob));
             await scheduler.Start();
             return scheduler;
         }

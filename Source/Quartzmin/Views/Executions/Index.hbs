@@ -13,7 +13,7 @@
             <th>Scheduled Fire Time</th>
             <th>Actual Fire Time</th>
             <th>Run Time</th>
-            <th></th>
+            <th>Log</th>
             <th></th>
         </tr>
     </thead>
@@ -25,9 +25,24 @@
             <td>{{ScheduledFireTime}}</td>
             <td>{{ActualFireTime}}</td>
             <td>{{RunTime}}</td>
-            <td>{{#if UseLog}}<a href="">log file</a>{{#else}}no log{{/if}}</td>
+            <td>{{#if EnableLog}}<a href="{{ActionUrl 'Download' 'Logs' id=Id}}" target="_blank">download</a>{{/if}}</td>
             <td style="text-align: right"><button class="ui super tiny red button btn-interrupt" data-id="{{Id}}"><i class="stop icon"></i>Interrupt</button></td>
         </tr>
+        {{#if EnableLog}}
+        <tr>
+            <td colspan="7">
+                <div class="ui accordion">
+                    <div class="title">
+                        <i class="dropdown icon"></i>
+                        Log Tail
+                    </div>
+                    <div class="content">
+                        <textarea readonly="readonly" cols="88" rows="10">{{LogTail}}</textarea>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{/if}}
         {{/each}}
     </tbody>
 </table>

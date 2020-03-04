@@ -26,7 +26,12 @@ namespace QuartzminServer
 
         private void ProcessLog(string line)
         {
-            _writer.Write(line);
+            _writer.WriteLine(line);
+        }
+        
+        public void Info(string msg)
+        {
+            _action.Post($"{DateTime.Now: yyyy-MM-dd HH\\:mm\\:ss} {msg}");
         }
 
         public Action<string> StdOutput { get; } 
