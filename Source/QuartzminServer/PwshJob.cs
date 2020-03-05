@@ -18,19 +18,19 @@ namespace QuartzminServer
         {
             return Task.Run(() => {
                 var pwsh = context.MergedJobDataMap.GetString("pwsh");
-                var waitForExit = context.MergedJobDataMap.GetBoolean(MapDataWaitForExit);
+                var waitForExit = context.MergedJobDataMap.GetBoolean(JobWaitForExit);
 
                 if (!File.Exists(pwsh))
                 {
                     throw new Exception("pwsh not found.");
                 }
-                var file = context.MergedJobDataMap.GetString(MapDataFile);
+                var file = context.MergedJobDataMap.GetString(JobExecutionFile);
                 if (!File.Exists(file))
                 {
                     throw new Exception($"{file} not found.");
                 }
-                var args = context.MergedJobDataMap.GetString(MapDataArgs);
-                var enableLog = context.MergedJobDataMap.GetBoolean(MapDataEnableLog);
+                var args = context.MergedJobDataMap.GetString(JobExecutionArgs);
+                var enableLog = context.MergedJobDataMap.GetBoolean(JobEnableLog);
                 JobLogger logger = null;
                 if (enableLog && waitForExit)
                 {
