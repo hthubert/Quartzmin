@@ -9,11 +9,6 @@ using Quartz.Impl.Calendar;
 
 namespace QuartzminServer
 {
-    internal class JobLog 
-    {
-
-    }
-
     [DisallowConcurrentExecution]
     public class TushareJob : IJob
     {
@@ -41,7 +36,7 @@ namespace QuartzminServer
                     logger.Info($"{row.Get("cal_date")}");
                 }
             }
-            await Task.Delay(TimeSpan.FromMinutes(5));
+            //await Task.Delay(TimeSpan.FromMinutes(5));
             logger.Dispose();
             await context.Scheduler.AddCalendar(CalendarName, cal, true, true);
         }
