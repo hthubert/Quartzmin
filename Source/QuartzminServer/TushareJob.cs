@@ -13,7 +13,7 @@ namespace QuartzminServer
     public class TushareJob : IJob
     {
         private const string CalendarName = "交易日历";
-        private async Task UpdateCal(IJobExecutionContext context, TusharePro tushare) 
+        private static async Task UpdateCal(IJobExecutionContext context, TusharePro tushare) 
         {
             var logger = new JobLogger(context);
             var (table, error) = await tushare.GetTradeCalendarAsync(DateTime.Today, DateTime.Today.AddMonths(6));
@@ -40,7 +40,6 @@ namespace QuartzminServer
             logger.Dispose();
             await context.Scheduler.AddCalendar(CalendarName, cal, true, true);
         }
-
         public async Task Execute(IJobExecutionContext context)
         {
             var token = context.MergedJobDataMap.GetString("tushare_token");
