@@ -8,6 +8,7 @@ using Quartz;
 using Quartz.Impl;
 using Quartzmin;
 using Quartzmin.SelfHost;
+using Quartz.Plugins.RecentHistory;
 
 namespace QuartzminServer
 {
@@ -35,7 +36,9 @@ namespace QuartzminServer
             plugin.JobTypes.Add(typeof(TushareJob));
             plugin.JobTypes.Add(typeof(PwshJob));
             plugin.JobTypes.Add(typeof(DotnetJob));
+            plugin.JobTypes.Add(typeof(HistoryPurgeJob));            
             await scheduler.Start();
+            HistoryPurgeJob.HistoryStore = scheduler.Context.GetExecutionHistoryStore();
             return scheduler;
         }
 

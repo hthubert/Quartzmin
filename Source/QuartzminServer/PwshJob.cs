@@ -20,7 +20,7 @@ namespace QuartzminServer
                 var pwsh = context.MergedJobDataMap.GetString("pwsh");
                 var waitForExit = context.MergedJobDataMap.GetBoolean(JobWaitForExit);
 
-                if (!File.Exists(pwsh))
+                if (!File.Exists(pwsh) && !ExistsOnPath(pwsh))
                 {
                     throw new Exception("pwsh not found.");
                 }

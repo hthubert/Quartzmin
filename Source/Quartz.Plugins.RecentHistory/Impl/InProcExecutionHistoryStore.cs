@@ -27,9 +27,9 @@ namespace Quartz.Plugins.RecentHistory.Impl
             }
         }
 
-        public async Task<IEnumerable<string>> Purge()
+        public async Task<IEnumerable<string>> Purge(int limit)
         {
-            var ids = new HashSet<string>((await FilterLastOfEveryTrigger(10)).Select(x => x.FireInstanceId));
+            var ids = new HashSet<string>((await FilterLastOfEveryTrigger(limit)).Select(x => x.FireInstanceId));
 
             lock (_data)
             {
@@ -131,6 +131,15 @@ namespace Quartz.Plugins.RecentHistory.Impl
 
         public void Shutdown()
         {
+        }
+
+        public Task Delete(string fireInstanceId)
+        {
+            lock (_data)
+            {
+                _data.Remove(fireInstanceId);
+            }
+            return Task.FromResult(0);
         }
     }
 }

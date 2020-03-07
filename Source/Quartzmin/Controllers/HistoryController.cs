@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Quartzmin.Helpers;
 
 #region Target-Specific Directives
 #if NETSTANDARD
@@ -57,8 +58,7 @@ namespace Quartzmin.Controllers
                 var jobKey = h.Job.Split('.');
                 var triggerKey = h.Trigger.Split('.');
 
-                list.Add(new
-                {
+                list.Add(new {
                     Entity = h,
 
                     JobGroup = jobKey[0],
@@ -76,6 +76,14 @@ namespace Quartzmin.Controllers
             }
 
             return View(list);
+        }
+
+        [HttpPost, JsonErrorResponse]
+        public async Task<IActionResult> Delete([FromBody]string id)
+        {
+            var store = Scheduler.Context.GetExecutionHistoryStore();
+            await store.Delete(id);
+            return Ok();
         }
 
     }

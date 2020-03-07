@@ -33,9 +33,18 @@ namespace Quartzmin
             return path.Replace("~", UserPath).Replace("`pwd`", PwdPath);
         }
 
+        public static void DeleteLogFile(string fireInstanceId)
+        {
+            var path = GetLogPath(fireInstanceId);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
         public static Stream GetLogStream(string fireInstanceId, bool @readonly = false)
         {
-            var path = Path.Combine(LogPath, fireInstanceId + ".txt");
+            string path = GetLogPath(fireInstanceId);
             if (!@readonly)
                 return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
             if (File.Exists(path))
@@ -43,6 +52,11 @@ namespace Quartzmin
                 return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             }
             return new MemoryStream();
+        }
+
+        private static string GetLogPath(string fireInstanceId)
+        {
+            return Path.Combine(LogPath, fireInstanceId + ".txt");
         }
 
         public static List<string> LogTail(string fireInstanceId, int size = 1024)
@@ -63,6 +77,26 @@ namespace Quartzmin
                 }
             }
             return lines;
+        }
+
+        public static bool ExistsOnPath(string fileName)
+        {
+            return GetFullPath(fileName) != null;
+        }
+
+        public static string GetFullPath(string fileName)
+        {
+            if (File.Exists(fileName))
+                return Path.GetFullPath(fileName);
+
+            var values = Environment.GetEnvironmentVariable("PATH");
+            foreach (var path in values.Split(Path.PathSeparator))
+            {
+                var fullPath = Path.Combine(path, fileName);
+                if (File.Exists(fullPath))
+                    return fullPath;
+            }
+            return null;
         }
     }
 }

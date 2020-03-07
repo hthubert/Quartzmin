@@ -31,17 +31,28 @@ namespace QuartzminServer
         {
             _writer.WriteLine(line);
 
-            if (_writer.AutoFlush || _flushTimeout == TimeSpan.Zero) 
+            if (_writer.AutoFlush || _flushTimeout == TimeSpan.Zero)
                 return;
-            if (DateTime.Now - _lastFlushTime <= _flushTimeout) 
+            if (DateTime.Now - _lastFlushTime <= _flushTimeout)
                 return;
             _lastFlushTime = DateTime.Now;
             _writer.Flush();
         }
 
+        public void WriteLog(string level, string msg)
+        {
+            _action.Post($"{DateTime.Now: yyyy-MM-dd HH\\:mm\\:ss} [{level}] {msg}");
+        }
+
+        internal void Error(Exception ex)
+        {
+            WriteLog("Error", ex.Message);
+            _action.Post(ex.StackTrace);
+        }
+
         public void Info(string msg)
         {
-            _action.Post($"{DateTime.Now: yyyy-MM-dd HH\\:mm\\:ss} {msg}");
+            WriteLog("Info", msg);
         }
 
         public Action<string> StdOutput { get; }

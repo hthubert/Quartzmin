@@ -123,14 +123,28 @@ namespace Quartz.Plugins.RecentHistory.Impl
             return Task.FromResult(0);
         }
 
-        public Task<IEnumerable<string>> Purge()
+        public Task<IEnumerable<string>> Purge(int limit)
         {
-            return Task.FromResult((IEnumerable<string>)Array.Empty<string>());
+            return Task.Run(() => {
+                var set = new HashSet<string>(FilterLastOfEveryTrigger(limit).Result.Select(n => n.FireInstanceId));
+                var deleted = _histories.FindAll().Where(n => !set.Contains(n.FireInstanceId)).Select(n => n.FireInstanceId);
+                foreach (var item in deleted)
+                {
+                    _histories.Delete(item);
+                }
+                return deleted;
+            });
         }
 
         public Task Save(ExecutionHistoryEntry entry)
         {
             _histories.Upsert(entry);
+            return Task.FromResult(0);
+        }
+
+        public Task Delete(string fireInstanceId)
+        {
+            _histories.Delete(fireInstanceId);
             return Task.FromResult(0);
         }
     }
