@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using Quartz;
 
 namespace Quartzmin
 {
@@ -9,10 +9,12 @@ namespace Quartzmin
     {
         public const string JobWaitForExit = "wait_for_exit";
         public const string JobEnableLog = "enable_log";
+        public const string JobEnableConsoleLog = "enable_console_log";
         public const string JobExecutionFile = "file";
         public const string JobExecutionArgs = "args";
         public const string LogAutoFlush = "log_auto_flush";
         public const string LogFlushTimeout = "log_flush_timeout";
+        public const string LogFilePlaceholder = "#logfile#";
         public static string LogPath;
         public static string UserPath;
         public static string PwdPath;
@@ -26,6 +28,19 @@ namespace Quartzmin
             {
                 Directory.CreateDirectory(LogPath);
             }
+        }
+
+        public static bool TryGetValue<T>(this JobDataMap map, string key, out T value, T defaultValue = default) 
+        {
+            var exist = map.TryGetValue(key, out var data);
+            if (exist)
+            {
+                value = (T)data;
+            }
+            else{
+                value = defaultValue;
+            }
+            return exist;
         }
 
         public static string RelativeToAbs(string path)
@@ -54,7 +69,7 @@ namespace Quartzmin
             return new MemoryStream();
         }
 
-        private static string GetLogPath(string fireInstanceId)
+        public static string GetLogPath(string fireInstanceId)
         {
             return Path.Combine(LogPath, fireInstanceId + ".txt");
         }
@@ -64,12 +79,17 @@ namespace Quartzmin
             var lines = new List<string>();
             using (var reader = new StreamReader(GetLogStream(fireInstanceId, true)))
             {
+                var skipFirst = false;
                 if (reader.BaseStream.Length > size)
                 {
+                    skipFirst = true;
                     reader.BaseStream.Seek(-size, SeekOrigin.End);
                 }
 
-                reader.ReadLine();
+                if (skipFirst)
+                {
+                    reader.ReadLine();
+                }
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {

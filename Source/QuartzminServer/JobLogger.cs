@@ -12,6 +12,9 @@ namespace QuartzminServer
 
     public sealed class JobLogger : IDisposable
     {
+        private readonly bool _enableLog;
+        private readonly bool _consoleLog;
+
         private readonly StreamWriter _writer;
         private readonly ActionBlock<string> _action;
         private readonly TimeSpan _flushTimeout;
@@ -19,16 +22,29 @@ namespace QuartzminServer
 
         public JobLogger(IJobExecutionContext context)
         {
-            _writer = new StreamWriter(GetLogStream(context.FireInstanceId));
-            _writer.AutoFlush = context.MergedJobDataMap.GetBoolean(LogAutoFlush);
             _action = new ActionBlock<string>(ProcessLog);
-            _flushTimeout = TimeSpan.FromSeconds(context.MergedJobDataMap.GetIntValue(LogFlushTimeout));
-            StdOutput = line => _action.Post(line);
-            ErrOutput = line => _action.Post(line);
+            context.MergedJobDataMap.TryGetValue(JobEnableLog, out _enableLog, true);
+            context.MergedJobDataMap.TryGetValue(JobEnableConsoleLog, out _consoleLog, true);
+            if (_enableLog && _consoleLog)
+            {
+                _writer = new StreamWriter(GetLogStream(context.FireInstanceId));
+                _writer.AutoFlush = context.MergedJobDataMap.GetBoolean(LogAutoFlush);
+                _flushTimeout = TimeSpan.FromSeconds(context.MergedJobDataMap.GetIntValue(LogFlushTimeout));
+                StdOutput = line => _action.Post(line);
+                ErrOutput = line => _action.Post(line);
+            }
+            else {
+                StdOutput = null;
+                ErrOutput = null;
+            }                       
         }
 
         private void ProcessLog(string line)
         {
+            if (_writer == null)
+            {
+                return;
+            }
             _writer.WriteLine(line);
 
             if (_writer.AutoFlush || _flushTimeout == TimeSpan.Zero)
@@ -58,11 +74,15 @@ namespace QuartzminServer
         public Action<string> StdOutput { get; }
         public Action<string> ErrOutput { get; }
 
+        public bool ConsoleLog => _consoleLog;
+
+        public bool EnableLog => _enableLog;
+
         public void Dispose()
         {
             _action.Complete();
             _action.Completion.Wait();
-            _writer.Close();
+            _writer?.Close();
         }
     }
 }

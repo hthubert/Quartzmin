@@ -17,9 +17,7 @@ namespace QuartzminServer
         public Task Execute(IJobExecutionContext context)
         {
             return Task.Run(() => {
-                var pwsh = context.MergedJobDataMap.GetString("pwsh");
-                var waitForExit = context.MergedJobDataMap.GetBoolean(JobWaitForExit);
-
+                var pwsh = context.MergedJobDataMap.GetString("pwsh");                
                 if (!File.Exists(pwsh) && !ExistsOnPath(pwsh))
                 {
                     throw new Exception("pwsh not found.");
@@ -30,13 +28,13 @@ namespace QuartzminServer
                     throw new Exception($"{file} not found.");
                 }
                 var args = context.MergedJobDataMap.GetString(JobExecutionArgs);
-                var enableLog = context.MergedJobDataMap.GetBoolean(JobEnableLog);
-                JobLogger logger = null;
-                if (enableLog && waitForExit)
+                var logger = new JobLogger(context);
+                if (logger.EnableLog && !logger.ConsoleLog)
                 {
-                    logger = new JobLogger(context);
+                    args = args.Replace(LogFilePlaceholder, GetLogPath(context.FireInstanceId));
                 }
-                var process = new ExternalCall(pwsh).Arguments($"{file} {args}").WinExecWithPipeAsync(logger?.StdOutput, logger?.ErrOutput);
+                var process = new ExternalCall(pwsh).Arguments($"{file} {args}").WinExecWithPipeAsync(logger.StdOutput, logger.ErrOutput);
+                context.MergedJobDataMap.TryGetValue(JobEnableLog, out var waitForExit, true);
                 if (waitForExit)
                 {
                     var ct = context.CancellationToken;
@@ -54,7 +52,11 @@ namespace QuartzminServer
                             break;
                         }
                     }
-                    logger?.Dispose();
+                }
+                logger.Dispose();
+                if (process.HasExited && process.ExitCode != 0)
+                {
+                    throw new Exception($"exit code {process.ExitCode}");
                 }
             }, context.CancellationToken);
         }
