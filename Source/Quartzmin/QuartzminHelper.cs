@@ -11,6 +11,7 @@ namespace Quartzmin
         public const string JobEnableLog = "enable_log";
         public const string JobEnableConsoleLog = "enable_console_log";
         public const string JobExecutionFile = "file";
+        public const string JobExecutionDir = "dir";
         public const string JobExecutionArgs = "args";
         public const string LogAutoFlush = "log_auto_flush";
         public const string LogFlushTimeout = "log_flush_timeout";
@@ -28,6 +29,12 @@ namespace Quartzmin
             {
                 Directory.CreateDirectory(LogPath);
             }
+        }
+
+        public static T TryGetValue<T>(this JobDataMap map, string key, T defaultValue = default)
+        {
+            TryGetValue(map, key, out var value, defaultValue);
+            return value;
         }
 
         public static bool TryGetValue<T>(this JobDataMap map, string key, out T value, T defaultValue = default) 

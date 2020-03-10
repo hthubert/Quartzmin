@@ -15,16 +15,18 @@ namespace Quartz.Plugins.RecentHistory
         public string DataPath { get; set; }
         public Type StoreType { get; set; }
 
-        public Task Initialize(string pluginName, IScheduler scheduler, CancellationToken cancellationToken = default(CancellationToken))
-        {
+        public Func<IJobExecutionContext, bool> EnableLogGetter { get; set; }
+
+        public Task Initialize(string pluginName, IScheduler scheduler, CancellationToken cancellationToken = default)
+        {            
             Name = pluginName;
             _scheduler = scheduler;
             _scheduler.ListenerManager.AddJobListener(this, EverythingMatcher<JobKey>.AllJobs());
-            
+            _scheduler.Context.SetExecutionHistoryPlugin(this);
             return Task.FromResult(0);
         }
 
-        public async Task Start(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task Start(CancellationToken cancellationToken = default)
         {
             _store = _scheduler.Context.GetExecutionHistoryStore();
 
@@ -46,16 +48,15 @@ namespace Quartz.Plugins.RecentHistory
             await Task.FromResult(0);
         }
 
-        public Task Shutdown(CancellationToken cancellationToken = default(CancellationToken))
+        public Task Shutdown(CancellationToken cancellationToken = default)
         {
             _store.Shutdown();
             return Task.FromResult(0);
         }
 
-        public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
-            var entry = new ExecutionHistoryEntry()
-            {
+            var entry = new ExecutionHistoryEntry() {
                 FireInstanceId = context.FireInstanceId,
                 SchedulerInstanceId = context.Scheduler.SchedulerInstanceId,
                 SchedulerName = context.Scheduler.SchedulerName,
@@ -64,12 +65,12 @@ namespace Quartz.Plugins.RecentHistory
                 Recovering = context.Recovering,
                 Job = context.JobDetail.Key.ToString(),
                 Trigger = context.Trigger.Key.ToString(),
-                EnableLog = context.MergedJobDataMap.GetBoolean("enable_log")
+                EnableLog = EnableLogGetter(context)
             };
             await _store.Save(entry);
         }
 
-        public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default)
         {
             var entry = await _store.Get(context.FireInstanceId);
             if (entry != null)
@@ -89,7 +90,7 @@ namespace Quartz.Plugins.RecentHistory
                 await _store.IncrementTotalJobsFailed();
         }
 
-        public async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
             var entry = await _store.Get(context.FireInstanceId);
             if (entry != null)

@@ -12,5 +12,15 @@ namespace Quartz.Plugins.RecentHistory
         {
             return (IExecutionHistoryStore)context.Get(typeof(IExecutionHistoryStore).FullName);
         }
+
+        public static void SetExecutionHistoryPlugin(this SchedulerContext context, ExecutionHistoryPlugin plugin) 
+        {
+            context.Put(typeof(ExecutionHistoryPlugin).FullName, plugin);
+        }
+
+        public static ExecutionHistoryPlugin GetExecutionHistoryPlugin(this SchedulerContext context) 
+        {
+            return (ExecutionHistoryPlugin)context.Get(typeof(ExecutionHistoryPlugin).FullName);
+        }
     }
 }

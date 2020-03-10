@@ -28,8 +28,8 @@ namespace QuartzminServer
             if (_enableLog && _consoleLog)
             {
                 _writer = new StreamWriter(GetLogStream(context.FireInstanceId));
-                _writer.AutoFlush = context.MergedJobDataMap.GetBoolean(LogAutoFlush);
-                _flushTimeout = TimeSpan.FromSeconds(context.MergedJobDataMap.GetIntValue(LogFlushTimeout));
+                _writer.AutoFlush = context.MergedJobDataMap.TryGetValue(LogAutoFlush, true);
+                _flushTimeout = TimeSpan.FromSeconds(context.MergedJobDataMap.TryGetValue(LogFlushTimeout, 1));
                 StdOutput = line => _action.Post(line);
                 ErrOutput = line => _action.Post(line);
             }

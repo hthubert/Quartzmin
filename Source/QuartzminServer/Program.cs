@@ -32,11 +32,18 @@ namespace QuartzminServer
         {
             var factory = new StdSchedulerFactory(LoadConfig());
             var scheduler = await factory.GetScheduler(CancellationToken.None);
-            var plugin = scheduler.Context.GetQuartzminPlugin();
-            plugin.JobTypes.Add(typeof(TushareJob));
-            plugin.JobTypes.Add(typeof(PwshJob));
-            plugin.JobTypes.Add(typeof(DotnetJob));
-            plugin.JobTypes.Add(typeof(HistoryPurgeJob));            
+            {
+                var plugin = scheduler.Context.GetQuartzminPlugin();
+                plugin.JobTypes.Add(typeof(TushareJob));
+                plugin.JobTypes.Add(typeof(PwshJob));
+                plugin.JobTypes.Add(typeof(DotnetJob));
+                plugin.JobTypes.Add(typeof(HistoryPurgeJob));
+                plugin.JobTypes.Add(typeof(ProgramJob));
+            }
+            {
+                var plugin = scheduler.Context.GetExecutionHistoryPlugin();
+                plugin.EnableLogGetter = context => context.MergedJobDataMap.TryGetValue(JobEnableLog, true);
+            }
             await scheduler.Start();
             HistoryPurgeJob.HistoryStore = scheduler.Context.GetExecutionHistoryStore();
             return scheduler;
