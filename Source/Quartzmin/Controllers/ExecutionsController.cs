@@ -1,12 +1,7 @@
-﻿using Quartz;
-using Quartzmin.Helpers;
-using Quartzmin.Models;
-using Quartz.Plugins.RecentHistory;
-using Quartz.Impl.Matchers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Globalization;
+using Quartzmin.Helpers;
 
 #region Target-Specific Directives
 #if NETSTANDARD
@@ -32,7 +27,7 @@ namespace Quartzmin.Controllers
 
             foreach (var exec in currentlyExecutingJobs)
             {
-                var enableLog = exec.MergedJobDataMap.GetBoolean(JobEnableLog);
+                var enableLog = exec.MergedJobDataMap.TryGetValue(JobEnableLog, true);
                 var item = new {
                     Id = exec.FireInstanceId,
                     JobGroup = exec.JobDetail.Key.Group,
