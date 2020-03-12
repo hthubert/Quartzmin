@@ -37,8 +37,16 @@
             <td>{{ActualFireTime}}</td>
             <td>{{FinishedTime}}</td>
             <td>{{Duration}}</td>
-            <td>{{#if Entity.EnableLog}}<a href="{{ActionUrl 'Download' 'Logs' id=Entity.FireInstanceId}}" target="_blank">download</a>{{/if}}</td>
-            <td><a onclick="detele_his('{{Entity.FireInstanceId}}')" style="cursor: pointer"><i class="left large red trash alternate outline icon"></i>Delete</a></td>
+            <td>
+                {{#if Entity.EnableLog}}
+                <a onclick="show_log(this)" data-content="{{ActionUrl 'View' 'Logs' id=Entity.FireInstanceId}}" style="cursor: pointer">view</a>
+                &nbsp;
+                <a href="{{ActionUrl 'Download' 'Logs' id=Entity.FireInstanceId}}" target="_blank">download</a>                
+                {{/if}}
+            </td>
+            <td>
+                <a onclick="detele_his('{{Entity.FireInstanceId}}')" style="cursor: pointer"><i class="left large red trash alternate outline icon"></i>Delete</a>
+            </td>
         </tr>
         {{#if Entity.ExceptionMessage}}
         <tr>
@@ -80,10 +88,43 @@
     </div>
 </div>
 
+<div class="ui large modal" id="log-dialog">
+    <div class="header">Log</div>
+    <div class="content">
+        <textarea id="log-content" readonly="readonly" cols="88" rows="40" style="width:100%"></textarea>
+    </div>
+</div>
+
 <script>
     function detele_his(id)
     {
         $('#delete-dialog .confirm-item').text(id);
         deleteItem(id, $('#msg-panel'), '{{ActionUrl "Delete"}}', '{{ActionUrl ""}}');
+    }
+
+    function show_log(event)
+    {
+        var logUrl = event.dataset.content;
+        $('#log-dialog')
+            .modal({
+                duration: 250,
+                onVisible: function () {
+                    $('#dimmer').dimmer('show');
+                    $.ajax({
+                        type: 'GET',
+                        url: logUrl,
+                        cache: false,
+                        success: function (data) {
+                            $('#log-content').text(data);
+                        },
+                        error: function (e) {
+                            $('#dimmer').dimmer('hide');
+                            prependErrorMessage(e, $('#msg-panel'));
+                        }
+                    });
+
+                }
+            })
+            .modal('show');
     }
 </script>

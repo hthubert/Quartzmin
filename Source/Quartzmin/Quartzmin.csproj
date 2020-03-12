@@ -8,7 +8,7 @@
     <NoWarn>1591</NoWarn>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
 
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Product>Quartzmin</Product>
     <Title>Web management tool for Quartz.NET</Title>
     <Authors>Jan Lucansky</Authors>
@@ -21,7 +21,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Copyright>Copyright © 2018 Jan Lucansky</Copyright>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/jlucansky/Quartzmin</RepositoryUrl>
+    <RepositoryUrl>https://github.com/hthubert/Quartzmin</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net\d'))">
