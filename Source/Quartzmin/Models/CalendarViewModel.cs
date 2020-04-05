@@ -46,7 +46,7 @@ namespace Quartzmin.Models
             if (knownCalendars.TryGetValue(Type, out var o))
                 o.Validator(this, errors);
             else
-                errors.Add(new ValidationError() { Field = nameof(Type), Reason = "Invalid value." });
+                errors.Add(new ValidationError { Field = nameof(Type), Reason = "Invalid value." });
         }
 
         public static CalendarViewModel FromCalendar(ICalendar calendar)
@@ -80,13 +80,13 @@ namespace Quartzmin.Models
             throw new InvalidOperationException("Unsupported Type: " + Type);
         }
 
-        private static readonly Dictionary<string, CalendarHandler> knownCalendars = new Dictionary<string, CalendarHandler>()
+        private static readonly Dictionary<string, CalendarHandler> knownCalendars = new Dictionary<string, CalendarHandler>
         {
-            ["annual"] = new CalendarHandler()
+            ["annual"] = new CalendarHandler
             {
                 Builder = model =>
                 {
-                    var cal = new AnnualCalendar() { TimeZone = model.ResolveTimeZone(), Description = model.Description };
+                    var cal = new AnnualCalendar { TimeZone = model.ResolveTimeZone(), Description = model.Description };
                     foreach (var d in model.Days)
                         cal.SetDayExcluded(DateTime.ParseExact(d, "MMMM d", CultureInfo.InvariantCulture), true);
                     return cal;
@@ -96,11 +96,11 @@ namespace Quartzmin.Models
                     for (int i = 0; i < model.Days.Count; i++)
                     {
                         if (DateTime.TryParseExact(model.Days[i], "MMMM d", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _) == false)
-                            errors.Add(new ValidationError() { Field = nameof(model.Days), Reason = "Invalid format.", FieldIndex = i });
+                            errors.Add(new ValidationError { Field = nameof(model.Days), Reason = "Invalid format.", FieldIndex = i });
                     }
                 }
             },
-            ["cron"] = new CalendarHandler()
+            ["cron"] = new CalendarHandler
             {
                 Builder = model =>
                 {
@@ -113,12 +113,12 @@ namespace Quartzmin.Models
                     else
                     {
                         if (Quartz.CronExpression.IsValidExpression(model.CronExpression) == false)
-                            errors.Add(new ValidationError() { Field = nameof(model.CronExpression), Reason = "Invalid format." });
+                            errors.Add(new ValidationError { Field = nameof(model.CronExpression), Reason = "Invalid format." });
                     }
 
                 }
             },
-            ["daily"] = new CalendarHandler()
+            ["daily"] = new CalendarHandler
             {
                 Builder = model =>
                 {
@@ -136,7 +136,7 @@ namespace Quartzmin.Models
                     else
                     {
                         if (TimeSpan.TryParse(model.StartingTime, out var _) == false)
-                            errors.Add(new ValidationError() { Field = nameof(model.StartingTime), Reason = "Invalid format." });
+                            errors.Add(new ValidationError { Field = nameof(model.StartingTime), Reason = "Invalid format." });
                     }
 
                     if (string.IsNullOrEmpty(model.EndingTime))
@@ -144,15 +144,15 @@ namespace Quartzmin.Models
                     else
                     {
                         if (TimeSpan.TryParse(model.EndingTime, out var _) == false)
-                            errors.Add(new ValidationError() { Field = nameof(model.EndingTime), Reason = "Invalid format." });
+                            errors.Add(new ValidationError { Field = nameof(model.EndingTime), Reason = "Invalid format." });
                     }
                 }
             },
-            ["holiday"] = new CalendarHandler()
+            ["holiday"] = new CalendarHandler
             {
                 Builder = model =>
                 {
-                    var cal = new HolidayCalendar() { TimeZone = model.ResolveTimeZone(), Description = model.Description };
+                    var cal = new HolidayCalendar { TimeZone = model.ResolveTimeZone(), Description = model.Description };
                     foreach (var d in model.Dates)
                         cal.AddExcludedDate(DateTime.ParseExact(d, DateTimeSettings.DefaultDateFormat, CultureInfo.InvariantCulture));
                     return cal;
@@ -162,15 +162,15 @@ namespace Quartzmin.Models
                     for (int i = 0; i < model.Dates.Count; i++)
                     {
                         if (DateTime.TryParseExact(model.Dates[i], DateTimeSettings.DefaultDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime _) == false)
-                            errors.Add(new ValidationError() { Field = nameof(model.Dates), Reason = "Invalid format.", FieldIndex = i });
+                            errors.Add(new ValidationError { Field = nameof(model.Dates), Reason = "Invalid format.", FieldIndex = i });
                     }
                 }
             },
-            ["monthly"] = new CalendarHandler()
+            ["monthly"] = new CalendarHandler
             {
                 Builder = model =>
                 {
-                    var cal = new MonthlyCalendar() { TimeZone = model.ResolveTimeZone(), Description = model.Description };
+                    var cal = new MonthlyCalendar { TimeZone = model.ResolveTimeZone(), Description = model.Description };
                     for (int i = 0; i < model.DaysExcluded.Length; i++)
                         cal.SetDayExcluded(i + 1, model.DaysExcluded[i]);
                     return cal;
@@ -178,14 +178,14 @@ namespace Quartzmin.Models
                 Validator = (model, errors) =>
                 {
                     if (model.DaysExcluded.Length != 31)
-                        errors.Add(new ValidationError() { Field = nameof(model.DaysExcluded), Reason = "Invalid Length." });
+                        errors.Add(new ValidationError { Field = nameof(model.DaysExcluded), Reason = "Invalid Length." });
                 }
             },
-            ["weekly"] = new CalendarHandler()
+            ["weekly"] = new CalendarHandler
             {
                 Builder = model =>
                 {
-                    var cal = new WeeklyCalendar() { TimeZone = model.ResolveTimeZone(), Description = model.Description };
+                    var cal = new WeeklyCalendar { TimeZone = model.ResolveTimeZone(), Description = model.Description };
                     for (int i = 0; i < model.DaysExcluded.Length; i++)
                         cal.SetDayExcluded((DayOfWeek)i, model.DaysExcluded[i]);
                     return cal;
@@ -193,15 +193,15 @@ namespace Quartzmin.Models
                 Validator = (model, errors) =>
                 {
                     if (model.DaysExcluded.Length != 7)
-                        errors.Add(new ValidationError() { Field = nameof(model.DaysExcluded), Reason = "Invalid Length." });
+                        errors.Add(new ValidationError { Field = nameof(model.DaysExcluded), Reason = "Invalid Length." });
                 }
             },
-            ["none"] = new CalendarHandler()
+            ["none"] = new CalendarHandler
             {
                 Builder = model => null,
                 Validator = (model, errors) => { }
             },
-            ["custom"] = new CalendarHandler()
+            ["custom"] = new CalendarHandler
             {
                 Builder = model => throw new InvalidOperationException(),
                 Validator = (model, errors) => { }
@@ -209,12 +209,12 @@ namespace Quartzmin.Models
 
         };
 
-        private static readonly Dictionary<Type, Func<ICalendar, CalendarViewModel>> converters = new Dictionary<Type, Func<ICalendar, CalendarViewModel>>()
+        private static readonly Dictionary<Type, Func<ICalendar, CalendarViewModel>> converters = new Dictionary<Type, Func<ICalendar, CalendarViewModel>>
         {
             [typeof(AnnualCalendar)] = calendar =>
             {
                 var cal = (AnnualCalendar)calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "annual",
                     Description = cal.Description,
@@ -225,7 +225,7 @@ namespace Quartzmin.Models
             [typeof(CronCalendar)] = calendar =>
             {
                 var cal = (CronCalendar)calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "cron",
                     Description = cal.Description,
@@ -236,7 +236,7 @@ namespace Quartzmin.Models
             [typeof(DailyCalendar)] = calendar =>
             {
                 var cal = (DailyCalendar)calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "daily",
                     Description = cal.Description,
@@ -248,7 +248,7 @@ namespace Quartzmin.Models
             [typeof(HolidayCalendar)] = calendar =>
             {
                 var cal = (HolidayCalendar)calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "holiday",
                     Description = cal.Description,
@@ -259,7 +259,7 @@ namespace Quartzmin.Models
             [typeof(MonthlyCalendar)] = calendar =>
             {
                 var cal = (MonthlyCalendar)calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "monthly",
                     Description = cal.Description,
@@ -270,7 +270,7 @@ namespace Quartzmin.Models
             [typeof(WeeklyCalendar)] = calendar =>
             {
                 var cal = (WeeklyCalendar)calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "weekly",
                     Description = cal.Description,
@@ -281,7 +281,7 @@ namespace Quartzmin.Models
             [typeof(BaseCalendar)] = calendar =>
             {
                 var cal = (BaseCalendar)calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "custom",
                     Description = cal.Description,
@@ -291,7 +291,7 @@ namespace Quartzmin.Models
             [typeof(ICalendar)] = calendar =>
             {
                 var cal = calendar;
-                return new CalendarViewModel()
+                return new CalendarViewModel
                 {
                     Type = "custom",
                     Description = cal.Description,

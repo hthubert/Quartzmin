@@ -45,25 +45,23 @@ namespace Quartzmin
             set => DateTimeSettings.DefaultTimeFormat = value;
         }
 
-        public List<Type> JobTypes { get; } = new List<Type>();
-
         public QuartzminOptions()
         {
-            DefaultSelectedType = new StringHandler() { Name = "String" };
+            DefaultSelectedType = new StringHandler { Name = "String" };
 
             // order of StandardTypes is important due to TypeHandlerBase.CanHandle evaluation
-            StandardTypes.Add(new FileHandler() { Name = "File", DisplayName = "Binary Data" });
-            StandardTypes.Add(new BooleanHandler() { Name = "Boolean" });
-            StandardTypes.Add(new DateTimeHandler() { Name = "Date", DisplayName = "Date", IgnoreTimeComponent = true });
-            StandardTypes.Add(new DateTimeHandler() { Name = "DateTime" });
-            StandardTypes.Add(new DateTimeHandler() { Name = "DateTimeUtc", DisplayName = "DateTime (UTC)", IsUtc = true });
+            StandardTypes.Add(new FileHandler { Name = "File", DisplayName = "Binary Data" });
+            StandardTypes.Add(new BooleanHandler { Name = "Boolean" });
+            StandardTypes.Add(new DateTimeHandler { Name = "Date", DisplayName = "Date", IgnoreTimeComponent = true });
+            StandardTypes.Add(new DateTimeHandler { Name = "DateTime" });
+            StandardTypes.Add(new DateTimeHandler { Name = "DateTimeUtc", DisplayName = "DateTime (UTC)", IsUtc = true });
             StandardTypes.Add(new NumberHandler(Number.Decimal));
             StandardTypes.Add(new NumberHandler(Number.Double));
             StandardTypes.Add(new NumberHandler(Number.Float));
             StandardTypes.Add(new NumberHandler(Number.Integer));
             StandardTypes.Add(new NumberHandler(Number.Long));
             StandardTypes.Add(DefaultSelectedType); // String
-            StandardTypes.Add(new StringHandler() { Name = "MultilineString", DisplayName = "String (Multiline)", IsMultiline = true });
+            StandardTypes.Add(new StringHandler { Name = "MultilineString", DisplayName = "String (Multiline)", IsMultiline = true });
         }
 
 #if DEBUG

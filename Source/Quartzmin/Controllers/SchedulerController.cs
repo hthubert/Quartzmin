@@ -1,28 +1,33 @@
-﻿using Quartz;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+using Quartz;
+using Quartz.Impl.Matchers;
+using Quartz.Plugins.RecentHistory;
+
 using Quartzmin.Helpers;
 using Quartzmin.Models;
-using Quartz.Plugins.RecentHistory;
-using Quartz.Impl.Matchers;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Globalization;
-
-#region Target-Specific Directives
-#if NETSTANDARD
-using Microsoft.AspNetCore.Mvc;
-#endif
-#if NETFRAMEWORK
-using System.Web.Http;
-using IActionResult = System.Web.Http.IHttpActionResult;
-#endif
-#endregion
 
 namespace Quartzmin.Controllers
 {
     public class SchedulerController : PageControllerBase
     {
+        private static async Task<IEnumerable<object>> GetGroupPauseState(IEnumerable<string> groups, Func<string, Task<bool>> func)
+        {
+            var result = new List<object>();
+
+            foreach (var name in groups.OrderBy(x => x, StringComparer.InvariantCultureIgnoreCase))
+                result.Add(new { Name = name, IsPaused = await func(name) });
+
+            return result;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -76,16 +81,6 @@ namespace Quartzmin.Controllers
             });
         }
 
-        async Task<IEnumerable<object>> GetGroupPauseState(IEnumerable<string> groups, Func<string, Task<bool>> func)
-        {
-            var result = new List<object>();
-
-            foreach (var name in groups.OrderBy(x => x, StringComparer.InvariantCultureIgnoreCase))
-                result.Add(new { Name = name, IsPaused = await func(name) });
-
-            return result;
-        }
-
         public class ActionArgs
         {
             public string Action { get; set; }
@@ -93,6 +88,7 @@ namespace Quartzmin.Controllers
             public string Groups { get; set; } // trigger-groups | job-groups
         }
 
+        [Authorize]
         [HttpPost, JsonErrorResponse]
         public async Task Action([FromBody] ActionArgs args)
         {

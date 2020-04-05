@@ -1,26 +1,23 @@
-﻿using Quartz;
-using Quartz.Impl.Matchers;
-using Quartzmin.Helpers;
-using Quartzmin.Models;
-using Quartz.Plugins.RecentHistory;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using CronExpressionDescriptor;
 
-#region Target-Specific Directives
-#if NETSTANDARD
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-#endif
-#if NETFRAMEWORK
-using System.Web.Http;
-using IActionResult = System.Web.Http.IHttpActionResult;
-#endif
-#endregion
+
+using Quartz;
+using Quartz.Impl.Matchers;
+using Quartz.Plugins.RecentHistory;
+
+using Quartzmin.Helpers;
+using Quartzmin.Models;
 
 namespace Quartzmin.Controllers
 {
+    [Authorize]
     public class TriggersController : PageControllerBase
     {
         [HttpGet]
@@ -34,7 +31,8 @@ namespace Quartzmin.Controllers
                 var t = await GetTrigger(key);
                 var state = await Scheduler.GetTriggerState(key);
 
-                list.Add(new TriggerListItem() {
+                list.Add(new TriggerListItem
+                {
                     Type = t.GetTriggerType(),
                     TriggerName = t.Key.Name,
                     TriggerGroup = t.Key.Group,
@@ -73,14 +71,14 @@ namespace Quartzmin.Controllers
         public async Task<IActionResult> New()
         {
             var model = await TriggerPropertiesViewModel.Create(Scheduler);
-            var jobDataMap = new JobDataMapModel() { Template = JobDataMapItemTemplate };
+            var jobDataMap = new JobDataMapModel { Template = JobDataMapItemTemplate };
 
             model.IsNew = true;
 
             model.Type = TriggerType.Cron;
             model.Priority = 5;
 
-            return View("Edit", new TriggerViewModel() { Trigger = model, DataMap = jobDataMap });
+            return View("Edit", new TriggerViewModel { Trigger = model, DataMap = jobDataMap });
         }
 
         [HttpGet]
@@ -91,7 +89,7 @@ namespace Quartzmin.Controllers
             var key = new TriggerKey(name, group);
             var trigger = await GetTrigger(key);
 
-            var jobDataMap = new JobDataMapModel() { Template = JobDataMapItemTemplate };
+            var jobDataMap = new JobDataMapModel { Template = JobDataMapItemTemplate };
 
             var model = await TriggerPropertiesViewModel.Create(Scheduler);
 
@@ -138,7 +136,7 @@ namespace Quartzmin.Controllers
 
             jobDataMap.Items.AddRange(trigger.GetJobDataMapModel(Services));
 
-            return View("Edit", new TriggerViewModel() { Trigger = model, DataMap = jobDataMap });
+            return View("Edit", new TriggerViewModel { Trigger = model, DataMap = jobDataMap });
         }
 
         [HttpPost, JsonErrorResponse]
@@ -247,7 +245,8 @@ namespace Quartzmin.Controllers
 
             try
             {
-                desc = ExpressionDescriptor.GetDescription(cron, new Options() {
+                desc = ExpressionDescriptor.GetDescription(cron, new Options
+                {
                     Verbose = true,
                     DayOfWeekStartIndexZero = false,
                     Use24HourTimeFormat = true,

@@ -29,7 +29,7 @@ namespace Quartzmin
                     {
                         if (_jsonSerializerSettings == null)
                         {
-                            var jss = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore };
+                            var jss = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
                             jss.Converters.Add(_builder.Build());
                             _jsonSerializerSettings = jss;
                         }
@@ -71,7 +71,7 @@ namespace Quartzmin
             if (!typeof(TypeHandlerBase).IsAssignableFrom(type))
                 throw new ArgumentException("Type must inherit from " + nameof(TypeHandlerBase));
 
-            var desc = new TypeHandlerDescriptor()
+            var desc = new TypeHandlerDescriptor
             {
                 Type = type,
                 TypeId = TypeHandlerBase.GetTypeId(type),

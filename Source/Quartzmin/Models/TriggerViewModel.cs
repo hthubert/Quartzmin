@@ -35,7 +35,7 @@ namespace Quartzmin.Models
 
         public static CronTriggerViewModel FromTrigger(ICronTrigger trigger)
         {
-            return new CronTriggerViewModel()
+            return new CronTriggerViewModel
             {
                 Expression = trigger.CronExpressionString,
                 TimeZone = trigger.TimeZone.Id,
@@ -91,7 +91,7 @@ namespace Quartzmin.Models
 
         public static SimpleTriggerViewModel FromTrigger(ISimpleTrigger trigger)
         {
-            var model = new SimpleTriggerViewModel()
+            var model = new SimpleTriggerViewModel
             {
                 RepeatCount = trigger.RepeatCount,
                 RepeatForever = trigger.RepeatCount == SimpleTriggerImpl.RepeatIndefinitely,
@@ -215,7 +215,7 @@ namespace Quartzmin.Models
 
         public static DailyTriggerViewModel FromTrigger(IDailyTimeIntervalTrigger trigger)
         {
-            var model = new DailyTriggerViewModel()
+            var model = new DailyTriggerViewModel
             {
                 RepeatCount = trigger.RepeatCount,
                 RepeatInterval = trigger.RepeatInterval,
@@ -293,7 +293,7 @@ namespace Quartzmin.Models
 
         public static CalendarTriggerViewModel FromTrigger(ICalendarIntervalTrigger trigger)
         {
-            return new CalendarTriggerViewModel()
+            return new CalendarTriggerViewModel
             {
                 RepeatInterval = trigger.RepeatInterval,
                 RepeatUnit = trigger.RepeatIntervalUnit,
@@ -496,19 +496,19 @@ namespace Quartzmin.Models
 
         private static string CreateMisfireInstructionsJson()
         {
-            var standardMisfireInstructions = new Dictionary<int, string>()
+            var standardMisfireInstructions = new Dictionary<int, string>
             {
                 [0] = "Smart Policy",
                 [1] = "Fire Once Now",
                 [2] = "Do Nothing",
             };
 
-            var validMisfireInstructions = new Dictionary<string, Dictionary<int, string>>()
+            var validMisfireInstructions = new Dictionary<string, Dictionary<int, string>>
             {
                 ["cron"] = standardMisfireInstructions,
                 ["calendar"] = standardMisfireInstructions,
                 ["daily"] = standardMisfireInstructions,
-                ["simple"] = new Dictionary<int, string>()
+                ["simple"] = new Dictionary<int, string>
                 {
                     [0] = "Smart Policy",
                     [1] = "Fire Now",
@@ -524,7 +524,7 @@ namespace Quartzmin.Models
 
         public static async Task<TriggerPropertiesViewModel> Create(IScheduler scheduler)
         {
-            var model = new TriggerPropertiesViewModel()
+            var model = new TriggerPropertiesViewModel
             {
                 TriggerGroupList = (await scheduler.GetTriggerGroupNames()).GroupArray(),
                 TriggerGroup = SchedulerConstants.DefaultGroup,

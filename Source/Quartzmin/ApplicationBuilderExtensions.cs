@@ -22,16 +22,13 @@ namespace Quartzmin
             var services = Services.Create(options);
             configure?.Invoke(services);
 
-            app.Use(async (context, next) =>
-            {
+            app.Use(async (context, next) => {
                 context.Items[typeof(Services)] = services;
                 await next.Invoke();
             });
-            
-            app.UseExceptionHandler(errorApp =>
-            {
-                errorApp.Run(async context =>
-                {
+
+            app.UseExceptionHandler(errorApp => {
+                errorApp.Run(async context => {
                     var ex = context.Features.Get<IExceptionHandlerFeature>().Error;
                     context.Response.StatusCode = 500;
                     context.Response.ContentType = "text/html";
@@ -39,12 +36,13 @@ namespace Quartzmin
                 });
             });
 
-            app.UseMvc(routes =>
-            {
+            app.UseMvc(routes => {
                 routes.MapRoute(
                     name: nameof(Quartzmin),
                     template: "{controller=Scheduler}/{action=Index}");
             });
+
+            //app.use
         }
 
         private static void UseFileServer(this IApplicationBuilder app, QuartzminOptions options)
@@ -55,8 +53,7 @@ namespace Quartzmin
             else
                 fs = new PhysicalFileProvider(options.ContentRootDirectory);
 
-            var fsOptions = new FileServerOptions()
-            {
+            var fsOptions = new FileServerOptions {
                 RequestPath = new PathString("/Content"),
                 EnableDefaultFiles = false,
                 EnableDirectoryBrowsing = false,
@@ -66,11 +63,17 @@ namespace Quartzmin
             app.UseFileServer(fsOptions);
         }
 
-        public static void AddQuartzmin(this IServiceCollection services)
+        public static void AddQuartzmin(this IServiceCollection services, Action<IMvcCoreBuilder> configure = null)
         {
-            services.AddMvcCore()
+            var mvc = services.AddMvcCore()
                 .AddApplicationPart(Assembly.GetExecutingAssembly())
+#if NETCORE3
+                .AddMvcOptions(options => options.EnableEndpointRouting = false)
+                .AddNewtonsoftJson();
+#elif NETCORE2
                 .AddJsonFormatters();
+#endif
+            configure?.Invoke(mvc);
         }
 
     }

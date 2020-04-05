@@ -1,0 +1,247 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "11549326",
+      "name": "Login password",
+      "font_class": "Loginpassword",
+      "unicode": "e6ad",
+      "unicode_decimal": 59053
+    },
+    {
+      "icon_id": "12284878",
+      "name": "data",
+      "font_class": "data",
+      "unicode": "e501",
+      "unicode_decimal": 58625
+    },
+    {
+      "icon_id": "13125060",
+      "name": "001-worldwide-2",
+      "font_class": "-worldwide-",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "13125061",
+      "name": "002-worldwide-1",
+      "font_class": "-worldwide-1",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "13125067",
+      "name": "007-speed",
+      "font_class": "-speed",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "13125068",
+      "name": "008-conversation",
+      "font_class": "-conversation",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "13125069",
+      "name": "010-analytics",
+      "font_class": "-analytics",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "13125070",
+      "name": "009-browsing",
+      "font_class": "-browsing",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "13125071",
+      "name": "011-online-education-10",
+      "font_class": "-online-education-",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "13125072",
+      "name": "012-online-education-9",
+      "font_class": "-online-education-1",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "13125076",
+      "name": "016-book-6",
+      "font_class": "-book-",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "13125077",
+      "name": "022-lesson",
+      "font_class": "-lesson",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "13125078",
+      "name": "017-tutorial-2",
+      "font_class": "-tutorial-",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "13125079",
+      "name": "018-tutorial-1",
+      "font_class": "-tutorial-1",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "13125080",
+      "name": "019-streaming",
+      "font_class": "-streaming",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "13125081",
+      "name": "024-conference",
+      "font_class": "-conference",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "13125082",
+      "name": "021-marketing-1",
+      "font_class": "-marketing-",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "13125084",
+      "name": "026-video-chat",
+      "font_class": "-video-chat",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "13125085",
+      "name": "025-video-1",
+      "font_class": "-video-",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "13125090",
+      "name": "037-calendar-4",
+      "font_class": "-calendar-",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "13125091",
+      "name": "038-tic-tac-toe",
+      "font_class": "-tic-tac-toe",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "13125092",
+      "name": "048-teaching",
+      "font_class": "-teaching",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "13125096",
+      "name": "034-to-do",
+      "font_class": "-to-do",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "13125097",
+      "name": "036-alarm",
+      "font_class": "-alarm",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "13125098",
+      "name": "035-timetable",
+      "font_class": "-timetable",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "13125103",
+      "name": "041-message",
+      "font_class": "-message",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "13125105",
+      "name": "046-whiteboard",
+      "font_class": "-whiteboard",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "13125107",
+      "name": "051-task-1",
+      "font_class": "-task-",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "13125111",
+      "name": "052-task",
+      "font_class": "-task",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "13125119",
+      "name": "067-stats",
+      "font_class": "-stats",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "13125120",
+      "name": "066-stats-1",
+      "font_class": "-stats-",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "13125121",
+      "name": "069-startup",
+      "font_class": "-startup",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "13125126",
+      "name": "075-search",
+      "font_class": "-search",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "13125135",
+      "name": "098-reading-1",
+      "font_class": "-reading-",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    }
+  ]
+}

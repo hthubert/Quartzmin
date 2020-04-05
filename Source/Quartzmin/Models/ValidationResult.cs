@@ -19,7 +19,7 @@ namespace Quartzmin.Models
 
         public static ValidationError EmptyField(string field)
         {
-            return new ValidationError() { Field = field, Reason = "The field cannot be empty." };
+            return new ValidationError { Field = field, Reason = "The field cannot be empty." };
         }
 
         public override string ToString()

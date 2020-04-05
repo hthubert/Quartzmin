@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <base href="{{BaseUrl}}">
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>{{ViewBag.Title}} - 任务管理器</title>
+
+    <link rel="icon" type="image/png" sizes="16x16" href="Content/Images/favicons/favicon-16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="Content/Images/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="Content/Images/favicons/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="Content/Images/favicons/favicon-64.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="Content/Images/favicons/favicon-128.png">
+
+    <link rel="stylesheet" href="Content/Lib/semantic-ui/semantic.min.css" type="text/css">
+    <link rel="stylesheet" href="Content/Lib/semantic-ui/calendar.min.css" type="text/css" />
+    <link rel="stylesheet" href="Content/Fonts/Lato.css" type="text/css" />
+    <link rel="stylesheet" href="Content/Site.css" type="text/css" />
+
+    <script src="Content/Lib/jquery-3.3.1.min.js"></script>
+    <script src="Content/Lib/moment.min.js"></script>
+    <script src="Content/Lib/FileSaver.js"></script>
+    <script src="Content/Lib/semantic-ui/semantic.min.js"></script>
+    <script src="Content/Lib/semantic-ui/state.min.js"></script>
+    <script src="Content/Lib/semantic-ui/calendar.min.js"></script>
+    <script src="Content/Scripts/iconfont.js"></script>
+    <script src="Content/Scripts/global.js"></script>
+    <style>
+        .iconfont {
+            width: 1em;
+            height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="ui top inverted stackable menu" id="top-menu">
+        <div class="ui container">
+            <div class="ui header item">
+                <div style="font-size: 40px">
+                    <svg class="iconfont" aria-hidden="true">
+                        <use xlink:href="#icon--speed"></use>
+                    </svg>
+                </div>
+                {{ProductName}} 任务调度
+            </div>
+
+            {{MenuItemActionLink title='任务概览' controller='Scheduler'}}
+            {{MenuItemActionLink title='管理授权' controller='OAuth'}}
+            {{MenuItemActionLink title='任务列表' controller='Jobs'}}
+            {{MenuItemActionLink title='触发器' controller='Triggers'}}
+            {{MenuItemActionLink title='正在执行' controller='Executions'}}
+            {{MenuItemActionLink title='历史记录' controller='History'}}
+            {{MenuItemActionLink title='日历' controller='Calendars'}}
+
+            <!--
+    <div class="right menu">
+        <div class="ui dropdown item">
+            <i class="user circle large icon"></i>
+            domain\user
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item center" href="#">Logout</a>
+            </div>
+        </div>
+    </div>
+    -->
+        </div>
+    </div>
+
+    <div class="ui main container" {{#footer}}style="min-height: calc(100% - 173px);"{{/footer}}>
+        {{{body}}}
+    </div>
+
+    <div class="ui hidden divider"></div>
+
+    <script>
+        $(function () {
+            $('#top-menu .ui.dropdown').dropdown();
+            $('.ui.accordion').accordion();
+        });
+    </script>
+
+    {{#footer}}
+    <footer style="text-align:center; margin-top: 3em; padding: .8em 0; background-color: #f8f8f8; font-size: 90%; border-top: 1px solid rgba(34,36,38,.1);">
+        <a href="https://github.com/hthubert/Quartzmin" target="_blank" style="color: #909090"><i class="github icon"></i> Quartzmin&nbsp;&nbsp;v{{QuartzminVersion}}</a>
+    </footer>
+    {{/footer}}
+</body>
+</html>

@@ -1,23 +1,18 @@
-﻿using Quartz;
-using Quartzmin.Helpers;
-using Quartzmin.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-#region Target-Specific Directives
-#if NETSTANDARD
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-#endif
-#if NETFRAMEWORK
-using System.Web.Http;
-using IActionResult = System.Web.Http.IHttpActionResult;
-#endif
-#endregion
+
+using Quartz;
+
+using Quartzmin.Helpers;
+using Quartzmin.Models;
 
 namespace Quartzmin.Controllers
 {
+    [Authorize]
     public class CalendarsController : PageControllerBase
     {
         [HttpGet]
@@ -30,7 +25,7 @@ namespace Quartzmin.Controllers
             foreach (string name in calendarNames)
             {
                 var cal = await Scheduler.GetCalendar(name);
-                list.Add(new CalendarListItem() { Name = name, Description = cal.Description, Type = cal.GetType() });
+                list.Add(new CalendarListItem { Name = name, Description = cal.Description, Type = cal.GetType() });
             }
             
             return View(list);
@@ -40,7 +35,7 @@ namespace Quartzmin.Controllers
         public IActionResult New()
         {
             ViewBag.IsNew = true;
-            return View("Edit", new[] { new CalendarViewModel()
+            return View("Edit", new[] { new CalendarViewModel
             {
                 IsRoot = true,
                 Type = "cron",
@@ -119,7 +114,7 @@ namespace Quartzmin.Controllers
                 
                 if (root == null)
                 {
-                    result.Errors.Add(new ValidationError() { Field = nameof(CalendarViewModel.Type), Reason = "Cannot create calendar.", SegmentIndex = 0 });
+                    result.Errors.Add(new ValidationError { Field = nameof(CalendarViewModel.Type), Reason = "Cannot create calendar.", SegmentIndex = 0 });
                 }
                 else
                 {

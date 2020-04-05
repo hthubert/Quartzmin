@@ -18,17 +18,17 @@ namespace Quartzmin
 
         public IScheduler Scheduler { get; set; }
 
-        internal Cache Cache { get; private set; }
+        public Cache Cache { get; private set; }
 
         public static Services Create(QuartzminOptions options)
         {
-            var handlebarsConfiguration = new HandlebarsConfiguration()
+            var handlebarsConfiguration = new HandlebarsConfiguration
             {
                 FileSystem = ViewFileSystemFactory.Create(options),
                 ThrowOnUnresolvedBindingExpression = true,
             };
 
-            var services = new Services()
+            var services = new Services
             {
                 Options = options,
                 Scheduler = options.Scheduler,

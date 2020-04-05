@@ -1,25 +1,21 @@
-﻿using Quartz;
-using Quartz.Impl.Matchers;
-using Quartzmin.Helpers;
-using Quartzmin.Models;
-using Quartz.Plugins.RecentHistory;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-#region Target-Specific Directives
-#if NETSTANDARD
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-#endif
-#if NETFRAMEWORK
-using System.Web.Http;
-using IActionResult = System.Web.Http.IHttpActionResult;
-#endif
-#endregion
+
+using Quartz;
+using Quartz.Impl.Matchers;
+using Quartz.Plugins.RecentHistory;
+
+using Quartzmin.Helpers;
+using Quartzmin.Models;
 
 namespace Quartzmin.Controllers
 {
+    [Authorize]
     public class JobsController : PageControllerBase
     {
         [HttpGet]
@@ -32,7 +28,7 @@ namespace Quartzmin.Controllers
             foreach (var key in keys)
             {
                 var detail = await GetJobDetail(key);
-                var item = new JobListItem()
+                var item = new JobListItem
                 {
                     Concurrent = !detail.ConcurrentExecutionDisallowed,
                     Persist = detail.PersistJobDataAfterExecution,
@@ -57,14 +53,14 @@ namespace Quartzmin.Controllers
         [HttpGet]
         public async Task<IActionResult> New()
         {
-            var job = new JobPropertiesViewModel() { IsNew = true };
-            var jobDataMap = new JobDataMapModel() { Template = JobDataMapItemTemplate };
+            var job = new JobPropertiesViewModel { IsNew = true };
+            var jobDataMap = new JobDataMapModel { Template = JobDataMapItemTemplate };
 
             job.GroupList = (await Scheduler.GetJobGroupNames()).GroupArray();
             job.Group = SchedulerConstants.DefaultGroup;
             job.TypeList = Services.Cache.JobTypes;
 
-            return View("Edit", new JobViewModel() { Job = job, DataMap = jobDataMap });
+            return View("Edit", new JobViewModel { Job = job, DataMap = jobDataMap });
         }
 
         [HttpGet]
@@ -74,7 +70,7 @@ namespace Quartzmin.Controllers
 
             var jobKey = JobKey.Create(name, group);
             var job = await GetJobDetail(jobKey);
-            var jobDataMap = new JobDataMapModel() { Template = JobDataMapItemTemplate };
+            var jobDataMap = new JobDataMapModel { Template = JobDataMapItemTemplate };
 
             ViewBag.JobName = name;
             ViewBag.Group = group;
@@ -111,8 +107,8 @@ namespace Quartzmin.Controllers
             var jobKey = JobKey.Create(name, group);
             var job = await GetJobDetail(jobKey);
 
-            var jobModel = new JobPropertiesViewModel() { };
-            var jobDataMap = new JobDataMapModel() { Template = JobDataMapItemTemplate };
+            var jobModel = new JobPropertiesViewModel { };
+            var jobDataMap = new JobDataMapModel { Template = JobDataMapItemTemplate };
 
             jobModel.IsNew = clone;
             jobModel.IsCopy = clone;
@@ -131,7 +127,7 @@ namespace Quartzmin.Controllers
 
             jobDataMap.Items.AddRange(job.GetJobDataMapModel(Services));
 
-            return View("Edit", new JobViewModel() { Job = jobModel, DataMap = jobDataMap });
+            return View("Edit", new JobViewModel { Job = jobModel, DataMap = jobDataMap });
         }
 
         private async Task<IJobDetail> GetJobDetail(JobKey key)

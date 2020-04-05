@@ -16,6 +16,10 @@ namespace Quartzmin
         public const string LogAutoFlush = "log_auto_flush";
         public const string LogFlushTimeout = "log_flush_timeout";
         public const string LogFilePlaceholder = "#logfile#";
+        public static string OAuthSecret = "Quartzmin@hetao2020";
+        public static string OAuthAudience = "Quartzmin";
+        public static string OAuthIssuer = "QuartzminServer";
+        public static string OAuthCookieName = "QUARTZMIN_OAUTH";
         public static string LogPath;
         public static string UserPath;
         public static string PwdPath;

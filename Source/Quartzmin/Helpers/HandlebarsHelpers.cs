@@ -16,7 +16,7 @@ namespace Quartzmin.Helpers
 {
     internal class HandlebarsHelpers
     {
-        Services _services;
+        private readonly Services _services;
 
         public HandlebarsHelpers(Services services)
         {
@@ -28,9 +28,9 @@ namespace Quartzmin.Helpers
             new HandlebarsHelpers(services).RegisterInternal();
         }
 
-        void RegisterInternal()
+        private void RegisterInternal()
         {
-            IHandlebars h = _services.Handlebars;
+            var h = _services.Handlebars;
 
             h.RegisterHelper("Upper", (o, c, a) => o.Write(a[0].ToString().ToUpper()));
             h.RegisterHelper("Lower", (o, c, a) => o.Write(a[0].ToString().ToLower()));
@@ -62,17 +62,17 @@ namespace Quartzmin.Helpers
             h.RegisterHelper(nameof(ProductName), ProductName);
         }
 
-        static bool IsTrue(object value) => value?.ToString()?.Equals("true", StringComparison.OrdinalIgnoreCase) == true;
+        private static bool IsTrue(object value) => value?.ToString()?.Equals("true", StringComparison.OrdinalIgnoreCase) == true;
 
-        string HtmlEncode(object value) => _services.ViewEngine.Encode(value);
+        private string HtmlEncode(object value) => _services.ViewEngine.Encode(value);
 
-        string UrlEncode(string value) => HttpUtility.UrlEncode(value);
+        private static string UrlEncode(string value) => HttpUtility.UrlEncode(value);
 
-        string BaseUrl
+        private string BaseUrl
         {
             get
             {
-                string url = _services.Options.VirtualPathRoot;
+                var url = _services.Options.VirtualPathRoot;
                 if (!url.EndsWith("/"))
                     url += "/";
                 return url;
@@ -113,7 +113,7 @@ namespace Quartzmin.Helpers
             return sb.ToString();
         }
 
-        void ViewBag(TextWriter output, dynamic context, params object[] arguments)
+        private static void ViewBag(TextWriter output, dynamic context, params object[] arguments)
         {
             var dict = (IDictionary<string, object>)arguments[0];
             var viewBag = (IDictionary<string, object>)context.ViewBag;
@@ -124,28 +124,28 @@ namespace Quartzmin.Helpers
             }
         }
 
-        void MenuItemActionLink(TextWriter output, dynamic context, params object[] arguments)
+        private void MenuItemActionLink(TextWriter output, dynamic context, params object[] arguments)
         {
-            var dict = arguments[0] as IDictionary<string, object> ?? new Dictionary<string, object>() { ["controller"] = arguments[0] };
+            var dict = arguments[0] as IDictionary<string, object> ?? new Dictionary<string, object> { ["controller"] = arguments[0] };
 
-            string classes = "item";
+            var classes = "item";
             if (dict["controller"].Equals(context.ControllerName))
                 classes += " active";
 
-            string url = BaseUrl + dict["controller"];
-            string title = HtmlEncode(dict.GetValue("title", dict["controller"]));
+            var url = BaseUrl + dict["controller"];
+            var title = HtmlEncode(dict.GetValue("title", dict["controller"]));
 
             output.WriteSafeString($@"<a href=""{url}"" class=""{classes}"">{title}</a>");
         }
 
-        void ActionUrl(TextWriter output, dynamic context, params object[] arguments)
+        private void ActionUrl(TextWriter output, dynamic context, params object[] arguments)
         {
             if (arguments.Length < 1 || arguments.Length > 3)
                 throw new ArgumentOutOfRangeException(nameof(arguments));
 
             IDictionary<string, object> routeValues = null;
             string controller = null;
-            string action = (arguments[0] as Page)?.ActionName ?? (string)arguments[0];
+            var action = (arguments[0] as Page)?.ActionName ?? (string)arguments[0];
 
             if (arguments.Length >= 2) // [actionName, controllerName/routeValues ]
             {
@@ -164,7 +164,7 @@ namespace Quartzmin.Helpers
             if (controller == null)
                 controller = context.ControllerName;
 
-            string url = BaseUrl + controller;
+            var url = BaseUrl + controller;
 
             if (!string.IsNullOrEmpty(action))
                 url += "/" + action;
@@ -172,7 +172,7 @@ namespace Quartzmin.Helpers
             output.WriteSafeString(AddQueryString(url, routeValues));
         }
 
-        void Selected(TextWriter output, dynamic context, params object[] arguments)
+        private void Selected(TextWriter output, dynamic context, params object[] arguments)
         {
             string selected;
             if (arguments.Length >= 2)
@@ -184,18 +184,18 @@ namespace Quartzmin.Helpers
                 output.Write("selected");
         }
 
-        void Json(TextWriter output, dynamic context, params object[] arguments)
+        private void Json(TextWriter output, dynamic context, params object[] arguments)
         {
             output.WriteSafeString(Newtonsoft.Json.JsonConvert.SerializeObject(arguments[0]));
         }
 
-        void RenderJobDataMapValue(TextWriter output, dynamic context, params object[] arguments)
+        private void RenderJobDataMapValue(TextWriter output, dynamic context, params object[] arguments)
         {
             var item = (JobDataMapItem)arguments[1];
             output.WriteSafeString(item.SelectedType.RenderView((Services)arguments[0], item.Value));
         }
 
-        void isType(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
+        private void isType(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
         {
             Type[] expectedType;
 
@@ -221,7 +221,7 @@ namespace Quartzmin.Helpers
                 options.Inverse(writer, (object)context);
         }
 
-        void eachPair(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
+        private void eachPair(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
         {
             void OutputElements<T>()
             {
@@ -236,12 +236,12 @@ namespace Quartzmin.Helpers
             OutputElements<KeyValuePair<string, object>>();
         }
 
-        void eachItems(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
+        private void eachItems(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
         {
             eachPair(writer, options, context, ((dynamic)arguments[0]).GetItems());
         }
 
-        void ToBase64(TextWriter output, dynamic context, params object[] arguments)
+        private void ToBase64(TextWriter output, dynamic context, params object[] arguments)
         {
             var bytes = (byte[])arguments[0];
 
@@ -249,7 +249,7 @@ namespace Quartzmin.Helpers
                 output.Write(Convert.ToBase64String(bytes));
         }
 
-        void footer(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
+        private void footer(TextWriter writer, HelperOptions options, dynamic context, params object[] arguments)
         {
             IDictionary<string, object> viewBag = context.ViewBag;
 
@@ -258,17 +258,19 @@ namespace Quartzmin.Helpers
                 options.Template(writer, (object)context);
             }
         }
-        void QuartzminVersion(TextWriter output, dynamic context, params object[] arguments)
+
+        private void QuartzminVersion(TextWriter output, dynamic context, params object[] arguments)
         {
             var v = GetType().Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().FirstOrDefault();
             output.Write(v.InformationalVersion);
         }
 
-        void Logo(TextWriter output, dynamic context, params object[] arguments)
+        private void Logo(TextWriter output, dynamic context, params object[] arguments)
         {
             output.Write(_services.Options.Logo);
         }
-        void ProductName(TextWriter output, dynamic context, params object[] arguments)
+
+        private void ProductName(TextWriter output, dynamic context, params object[] arguments)
         {
             output.Write(_services.Options.ProductName);
         }

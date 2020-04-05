@@ -56,7 +56,8 @@ namespace Quartz.Plugins.RecentHistory
 
         public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
-            var entry = new ExecutionHistoryEntry() {
+            var entry = new ExecutionHistoryEntry
+            {
                 FireInstanceId = context.FireInstanceId,
                 SchedulerInstanceId = context.Scheduler.SchedulerInstanceId,
                 SchedulerName = context.Scheduler.SchedulerName,

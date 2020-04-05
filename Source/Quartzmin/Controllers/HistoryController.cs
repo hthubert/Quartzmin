@@ -1,22 +1,18 @@
-﻿using Quartz.Plugins.RecentHistory;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Quartzmin.Helpers;
 
-#region Target-Specific Directives
-#if NETSTANDARD
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-#endif
-#if NETFRAMEWORK
-using System.Web.Http;
-using IActionResult = System.Web.Http.IHttpActionResult;
-#endif
-#endregion
+
+using Quartz.Plugins.RecentHistory;
+
+using Quartzmin.Helpers;
 
 namespace Quartzmin.Controllers
 {
+    [Authorize]
     public class HistoryController : PageControllerBase
     {
         [HttpGet]

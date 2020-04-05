@@ -28,7 +28,7 @@ namespace Quartzmin.Models
 
         public void AddBar(double value, string tooltip, string cssClass)
         {
-            Bars.Add(new Bar() { Value = value, Tooltip = tooltip, CssClass = cssClass });
+            Bars.Add(new Bar { Value = value, Tooltip = tooltip, CssClass = cssClass });
         }
 
         internal void Layout()
@@ -50,7 +50,7 @@ namespace Quartzmin.Models
 
             for (int i = 0; i < 10; i++)
             {
-                hst.Bars.Add(new Bar()
+                hst.Bars.Add(new Bar
                 {
                     Value = i % 3 + i % 5 + 1,
                     CssClass = "grey",

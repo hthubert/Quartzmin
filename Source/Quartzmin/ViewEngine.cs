@@ -6,8 +6,8 @@ namespace Quartzmin
 {
     public class ViewEngine
     {
-        readonly Services _services;
-        readonly Dictionary<string, Func<object, string>> _compiledViews = new Dictionary<string, Func<object, string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Services _services;
+        private readonly Dictionary<string, Func<object, string>> _compiledViews = new Dictionary<string, Func<object, string>>(StringComparer.OrdinalIgnoreCase);
 
         public bool UseCache { get; set; }
 
@@ -17,7 +17,21 @@ namespace Quartzmin
             UseCache = string.IsNullOrEmpty(services.Options.ViewsRootDirectory);
         }
 
-        Func<object, string> GetRenderDelegate(string templatePath)
+        public void RegisterTemplate(string templatePath, string template)
+        {
+            if (UseCache)
+            {
+                lock (_compiledViews)
+                {
+                    if (!_compiledViews.ContainsKey(templatePath))
+                    {
+                        _compiledViews[templatePath] = _services.Handlebars.Compile(template);
+                    }
+                }
+            }
+        }
+
+        private Func<object, string> GetRenderDelegate(string templatePath)
         {
             if (UseCache)
             {

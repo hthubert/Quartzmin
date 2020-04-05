@@ -1,0 +1,86 @@
+﻿{{!<Layout}}
+
+{{ViewBag Title='管理授权'}}
+{{ViewBag ShowFooter=true}}
+
+<style type="text/css">
+    body {
+        background-color: #DADADA;
+    }
+
+    body > .grid {
+        height: 100%;
+    }
+
+    .image {
+        margin-top: -100px;
+    }
+
+    .column {
+        max-width: 450px;
+    }
+</style>
+
+<div class="ui inverted page dimmer" id="dimmer"><div class="ui loader"></div></div>
+
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <h2 class="ui teal header">
+            <il style="font-size: 40px">
+                <svg class="iconfont" aria-hidden="true">
+                    <use xlink:href="#icon-Loginpassword"></use>
+                </svg>
+            </il>
+            <div class="content" style="padding-top:5px">
+                Log-in to your account
+            </div>
+        </h2>
+        <form class="ui large form" id="form" method="post">
+            <div id="user-props" class="ui stacked segment">
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input type="text" id="UserName" name="UserName" placeholder="UserName">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password" id="Password" name="Password" placeholder="Password">
+                    </div>
+                </div>
+                <div class="ui fluid large teal submit button" id="btn-login">Login</div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        initDimmer();
+
+        function login() {
+            $('#dimmer').dimmer('show');
+
+            var model = { "UserName": $("#UserName").val(), "Password": $("#Password").val() };
+
+            $.ajax({
+                type: 'POST', url: '{{ActionUrl "Authenticate"}}',
+                data: JSON.stringify(model), 
+                contentType: 'application/json', 
+                dataType: "json", 
+                cache: false,
+                success: function (data) {
+                    document.location = '{{ActionUrl "Index" "Jobs"}}';
+                },
+                error: function (e) {
+                    $('#dimmer').dimmer('hide');
+                    prependErrorMessage(e, $('#user-props'));
+                }
+            });
+        }
+
+        $('#btn-login').click(function () { login(); });
+        
+    });
+</script>

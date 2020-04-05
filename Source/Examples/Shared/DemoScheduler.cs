@@ -15,7 +15,7 @@ namespace Quartzmin
         {
             var scheduler = await StdSchedulerFactory.GetDefaultScheduler();           
             var plugin = scheduler.Context.GetQuartzminPlugin();
-            plugin.JobTypes.Add(typeof(TushareJob));
+            //plugin.JobTypes.Add(typeof(TushareJob));
             /*
             {
                 var jobData = new JobDataMap();

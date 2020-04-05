@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Quartzmin.Helpers;
-
-#region Target-Specific Directives
-#if NETSTANDARD
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-#endif
-#if NETFRAMEWORK
-using System.Web.Http;
-using IActionResult = System.Web.Http.IHttpActionResult;
-#endif
-#endregion
+
+using Quartzmin.Helpers;
 
 namespace Quartzmin.Controllers
 {
     using static QuartzminHelper;
+
+    [Authorize]
     public class ExecutionsController : PageControllerBase
     {
         [HttpGet]
@@ -51,6 +46,7 @@ namespace Quartzmin.Controllers
             public string Id { get; set; }
         }
 
+        [Authorize]
         [HttpPost, JsonErrorResponse]
         public async Task<IActionResult> Interrupt([FromBody] InterruptArgs args)
         {

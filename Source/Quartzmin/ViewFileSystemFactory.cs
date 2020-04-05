@@ -1,4 +1,5 @@
-﻿using HandlebarsDotNet;
+﻿using System.Collections.Generic;
+using HandlebarsDotNet;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -7,6 +8,16 @@ namespace Quartzmin
 {
     public static class ViewFileSystemFactory
     {
+        static ViewFileSystemFactory()
+        {
+            RegisterAssembly(nameof(Quartzmin), Assembly.GetExecutingAssembly());
+        }
+
+        public static void RegisterAssembly(string namespaceName, Assembly assembly)
+        {
+            EmbeddedFileSystem.LoadViews(namespaceName, assembly);
+        }
+
         public static ViewEngineFileSystem Create(QuartzminOptions options)
         {
             ViewEngineFileSystem fs;
@@ -25,11 +36,11 @@ namespace Quartzmin
 
         private class DiskFileSystem : ViewEngineFileSystem
         {
-            string root;
+            private readonly string _root;
 
             public DiskFileSystem(string root)
             {
-                this.root = root;
+                this._root = root;
             }
 
             public override string GetFileContent(string filename)
@@ -47,17 +58,44 @@ namespace Quartzmin
                 return File.Exists(GetFullPath(filePath));
             }
 
-            string GetFullPath(string filePath)
+            private string GetFullPath(string filePath)
             {
-                return Path.Combine(root, filePath.Replace("partials/", "Partials/").Replace('/', Path.DirectorySeparatorChar));
+                return Path.Combine(_root, filePath.Replace("partials/", "Partials/").Replace('/', Path.DirectorySeparatorChar));
             }
         }
 
         private class EmbeddedFileSystem : ViewEngineFileSystem
         {
+            private static readonly Dictionary<string, (string flag, Assembly asm)> ViewMap = new Dictionary<string, (string, Assembly)>();
+            public static void LoadViews(string namespaceName, Assembly assembly)
+            {
+                var viewFlag = namespaceName + ".Views.";
+                foreach (var name in assembly.GetManifestResourceNames())
+                {
+                    if (name.StartsWith(viewFlag))
+                    {
+                        ViewMap[name.Substring(viewFlag.Length)] = (viewFlag, assembly);
+                    }
+                }
+            }
+
+            private static string GetFullPath(string filePath)
+            {
+                return filePath.Replace("partials/", "Partials/").Replace('/', '.').Replace('\\', '.');
+            }
+
+            protected override string CombinePath(string dir, string otherFileName)
+            {
+                return Path.Combine(dir, otherFileName);
+            }
+
             public override string GetFileContent(string filename)
             {
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(GetFullPath(filename)))
+                var path = GetFullPath(filename);
+                if (!ViewMap.TryGetValue(path, out var item)) 
+                    return null;
+
+                using (var stream = item.asm.GetManifestResourceStream(item.flag + path))
                 {
                     if (stream == null)
                         return null;
@@ -69,19 +107,9 @@ namespace Quartzmin
                 }
             }
 
-            protected override string CombinePath(string dir, string otherFileName)
-            {
-                return Path.Combine(dir, otherFileName);
-            }
-
             public override bool FileExists(string filePath)
             {
-                return Assembly.GetExecutingAssembly().GetManifestResourceInfo(GetFullPath(filePath)) != null;
-            }
-
-            string GetFullPath(string filePath)
-            {
-                return Path.Combine(nameof(Quartzmin) + ".Views", filePath.Replace("partials/", "Partials/")).Replace('/', '.').Replace('\\', '.');
+                return ViewMap.ContainsKey(GetFullPath(filePath));
             }
         }
 

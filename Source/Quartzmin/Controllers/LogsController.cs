@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Quartzmin.Controllers
 {
     using static QuartzminHelper;
+
+    [Authorize]
     public class LogsController : PageControllerBase
     {
         [HttpGet]

@@ -7,7 +7,7 @@ namespace Quartzmin.TypeHandlers
     [EmbeddedTypeHandlerResources(nameof(NumberHandler), Script = "")]
     public class NumberHandler : TypeHandlerBase
     {
-        static readonly Dictionary<UnderlyingType, Type> _clrTypes = new Dictionary<UnderlyingType, Type>()
+        static readonly Dictionary<UnderlyingType, Type> _clrTypes = new Dictionary<UnderlyingType, Type>
         {
             [UnderlyingType.Decimal] = typeof(decimal),
             [UnderlyingType.Double] = typeof(double),

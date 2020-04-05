@@ -72,7 +72,7 @@ namespace Quartzmin
 #if NETSTANDARD
             using (var ms = new MemoryStream())
             {
-                request.Body.CopyTo(ms);
+                request.Body.CopyToAsync(ms).Wait();
                 return Encoding.UTF8.GetString(ms.ToArray());
             }
 #endif
@@ -199,7 +199,7 @@ namespace Quartzmin
             {
                 JobDataMapItem model;
 
-                model = new JobDataMapItem()
+                model = new JobDataMapItem
                 {
                     Enabled = true,
                     Name = pair.Key,
@@ -236,7 +236,7 @@ namespace Quartzmin
                         else
                             strValue = string.Format(CultureInfo.InvariantCulture, "{0}", model.Value);
 
-                        model.SelectedType = new UnsupportedTypeHandler()
+                        model.SelectedType = new UnsupportedTypeHandler
                         {
                             Name = Guid.NewGuid().ToString("N"), // assure unique name
                             AssemblyQualifiedName = t.RemoveAssemblyDetails(),
@@ -296,7 +296,7 @@ namespace Quartzmin
         public static string GetScheduleDescription(this ITrigger trigger)
         {
             if (trigger is ICronTrigger cr)
-                return CronExpressionDescriptor.ExpressionDescriptor.GetDescription(cr.CronExpressionString, new CronExpressionDescriptor.Options() 
+                return CronExpressionDescriptor.ExpressionDescriptor.GetDescription(cr.CronExpressionString, new CronExpressionDescriptor.Options
                 {
                     DayOfWeekStartIndexZero = false, Locale = "zh-Hans", Use24HourTimeFormat = true
                 });
