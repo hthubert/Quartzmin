@@ -47,7 +47,7 @@ namespace Quartzmin.Controllers
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(OAuthSecret);
             var authTime = DateTime.UtcNow;
-            var expiresAt = authTime.AddHours(2);
+            var expiresAt = authTime.AddDays(1);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
