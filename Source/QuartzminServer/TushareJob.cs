@@ -83,7 +83,7 @@ namespace QuartzminServer
         public async Task Execute(IJobExecutionContext context)
         {
             var token = context.MergedJobDataMap.GetString("tushare_token");
-            var tushare = new TusharePro(token);
+            var tushare = new TusharePro(token, 10);
 
             var action = context.MergedJobDataMap.GetString("tushare_action");
             switch (action)
