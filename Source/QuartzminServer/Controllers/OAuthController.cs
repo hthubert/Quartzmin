@@ -7,8 +7,6 @@ using System.Security.Claims;
 using System.Text;
 
 using IdentityModel;
-
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 

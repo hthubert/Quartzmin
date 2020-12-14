@@ -3,7 +3,6 @@ using Quartz.Spi;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 #if NETSTANDARD

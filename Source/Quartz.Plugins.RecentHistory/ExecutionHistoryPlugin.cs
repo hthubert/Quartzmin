@@ -1,8 +1,8 @@
-﻿using Quartz.Impl.Matchers;
-using Quartz.Spi;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Quartz.Impl.Matchers;
+using Quartz.Spi;
 
 namespace Quartz.Plugins.RecentHistory
 {

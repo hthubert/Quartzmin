@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp5</TargetFrameworks>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -21,20 +21,14 @@
     <Copyright>Copyright © 2018 Jan Lucansky</Copyright>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/jlucansky/Quartzmin</RepositoryUrl>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netcoreapp3'))">
-    <DefineConstants>NETSTANDARD, NETCORE3</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netstandard\d'))">
-    <DefineConstants>NETSTANDARD, NETCORE2</DefineConstants>
+    <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Quartzmin\Quartzmin.csproj" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

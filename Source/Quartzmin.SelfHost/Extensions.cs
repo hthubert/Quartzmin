@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Quartz;
+﻿using Quartz;
 
 namespace Quartzmin.SelfHost
 {

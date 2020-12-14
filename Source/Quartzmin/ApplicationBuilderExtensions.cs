@@ -1,13 +1,12 @@
 ﻿#if NETSTANDARD
 
+using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using System;
-using System.Reflection;
 
 namespace Quartzmin
 {
@@ -22,13 +21,16 @@ namespace Quartzmin
             var services = Services.Create(options);
             configure?.Invoke(services);
 
-            app.Use(async (context, next) => {
+            app.Use(async (context, next) =>
+            {
                 context.Items[typeof(Services)] = services;
                 await next.Invoke();
             });
 
-            app.UseExceptionHandler(errorApp => {
-                errorApp.Run(async context => {
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
                     var ex = context.Features.Get<IExceptionHandlerFeature>().Error;
                     context.Response.StatusCode = 500;
                     context.Response.ContentType = "text/html";
@@ -36,7 +38,8 @@ namespace Quartzmin
                 });
             });
 
-            app.UseMvc(routes => {
+            app.UseMvc(routes =>
+            {
                 routes.MapRoute(
                     name: nameof(Quartzmin),
                     template: "{controller=Scheduler}/{action=Index}");
@@ -53,7 +56,8 @@ namespace Quartzmin
             else
                 fs = new PhysicalFileProvider(options.ContentRootDirectory);
 
-            var fsOptions = new FileServerOptions {
+            var fsOptions = new FileServerOptions
+            {
                 RequestPath = new PathString("/Content"),
                 EnableDefaultFiles = false,
                 EnableDirectoryBrowsing = false,
@@ -67,12 +71,8 @@ namespace Quartzmin
         {
             var mvc = services.AddMvcCore()
                 .AddApplicationPart(Assembly.GetExecutingAssembly())
-#if NETCORE3
                 .AddMvcOptions(options => options.EnableEndpointRouting = false)
                 .AddNewtonsoftJson();
-#elif NETCORE2
-                .AddJsonFormatters();
-#endif
             configure?.Invoke(mvc);
         }
 

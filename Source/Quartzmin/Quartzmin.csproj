@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp5</TargetFrameworks>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -22,13 +22,7 @@
     <Copyright>Copyright © 2018 Jan Lucansky</Copyright>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/hthubert/Quartzmin</RepositoryUrl>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netcoreapp3'))">
-    <DefineConstants>NETSTANDARD, NETCORE3</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netstandard\d'))">
-    <DefineConstants>NETSTANDARD, NETCORE2</DefineConstants>
+    <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,26 +30,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CronExpressionDescriptor" Version="2.15.0" />
+    <PackageReference Include="CronExpressionDescriptor" Version="2.16.0" />
     <PackageReference Include="Handlebars.Net" Version="1.11.5" />
     <PackageReference Include="JsonSubTypes" Version="1.8.0" />
-    <PackageReference Include="Quartz" Version="3.2.2" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.9" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.9" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(DefineConstants.Contains('NETCORE3'))">
+    <PackageReference Include="Quartz" Version="3.2.3" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson">
-      <Version>3.1.9</Version>
+      <Version>5.0.1</Version>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="$(DefineConstants.Contains('NETCORE2'))">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
