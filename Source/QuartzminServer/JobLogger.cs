@@ -31,10 +31,11 @@ namespace QuartzminServer
                 StdOutput = line => _action.Post(line);
                 ErrOutput = line => _action.Post(line);
             }
-            else {
+            else
+            {
                 StdOutput = null;
                 ErrOutput = null;
-            }                       
+            }
         }
 
         private void ProcessLog(string line)
