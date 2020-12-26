@@ -1,7 +1,4 @@
-﻿using HandlebarsDotNet;
-using Quartzmin.Models;
-using Quartzmin.TypeHandlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,8 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web;
-
+using HandlebarsDotNet;
+using Quartzmin.Models;
+using Quartzmin.TypeHandlers;
 using static Quartzmin.Controllers.PageControllerBase;
+// ReSharper disable InconsistentNaming
 
 namespace Quartzmin.Helpers
 {
@@ -32,8 +32,8 @@ namespace Quartzmin.Helpers
         {
             var h = _services.Handlebars;
 
-            h.RegisterHelper("Upper", (o, c, a) => o.Write(a[0].ToString().ToUpper()));
-            h.RegisterHelper("Lower", (o, c, a) => o.Write(a[0].ToString().ToLower()));
+            h.RegisterHelper("Upper", (o, c, a) => o.Write(a[0].ToString()?.ToUpper()));
+            h.RegisterHelper("Lower", (o, c, a) => o.Write(a[0].ToString()?.ToLower()));
             h.RegisterHelper("LocalTimeZoneInfoId", (o, c, a) => o.Write(TimeZoneInfo.Local.Id));
             h.RegisterHelper("SystemTimeZonesJson", (o, c, a) => Json(o, c, TimeZoneInfo.GetSystemTimeZones().ToDictionary()));
             h.RegisterHelper("DefaultDateFormat", (o, c, a) => o.Write(DateTimeSettings.DefaultDateFormat));

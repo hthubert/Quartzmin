@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks.Dataflow;
 using Quartz;
 using Quartzmin;
@@ -33,10 +31,11 @@ namespace QuartzminServer
                 StdOutput = line => _action.Post(line);
                 ErrOutput = line => _action.Post(line);
             }
-            else {
+            else
+            {
                 StdOutput = null;
                 ErrOutput = null;
-            }                       
+            }
         }
 
         private void ProcessLog(string line)

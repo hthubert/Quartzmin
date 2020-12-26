@@ -1,8 +1,5 @@
 ﻿using System;
-using Quartz;
-using Quartz.Impl.Matchers;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Quartzmin
 {

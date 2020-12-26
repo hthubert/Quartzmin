@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using QuantBox;
 using Quartz;
 using Quartz.Impl.Calendar;
@@ -28,6 +30,39 @@ namespace QuartzminServer
             return cal;
         }
 
+        private static async Task UpdateCalYear(IJobExecutionContext context)
+        {
+            var logger = new JobLogger(context);
+            var url = context.MergedJobDataMap.GetString("cal_url");
+            var handler = new HttpClientHandler {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            var client = new HttpClient(handler);
+            client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+            var content = await client.GetStringAsync(url);
+            var list = JsonConvert.DeserializeObject<string[]>(content);
+            var tradingDays = new HashSet<DateTime>();
+            foreach (var date in list)
+            {
+                tradingDays.Add(TusharePro.ToDateTime(date));
+            }
+            var year = context.MergedJobDataMap.GetIntValue("cal_year");
+            var holidays =new List<DateTime>();
+            for (var date = new DateTime(year, 1, 1); date <= new DateTime(year, 12, 31); date = date.AddDays(1))
+            {
+                if (tradingDays.Contains(date))
+                {
+                    continue;
+                }
+                holidays.Add(date);
+                logger.Info($"添加节假日:{date}");
+            }
+
+            await UpdatedCal(context, holidays);
+            logger.Dispose();
+        }
+
         private static async Task UpdateCal(IJobExecutionContext context, TusharePro tushare)
         {
             var logger = new JobLogger(context);
@@ -37,16 +72,21 @@ namespace QuartzminServer
                 throw new Exception(error);
             }
 
-            var dates = new List<DateTime>();
+            var holidays = new List<DateTime>();
             foreach (var row in table.Rows)
             {
                 if (row.Get("is_open") == "1")
                 {
                     continue;
                 }
-                dates.Add(TusharePro.ToDateTime(row.Get("cal_date")));
+                holidays.Add(TusharePro.ToDateTime(row.Get("cal_date")));
             }
+            await UpdatedCal(context, holidays);
+            logger.Dispose();
+        }
 
+        private static async Task UpdatedCal(IJobExecutionContext context, List<DateTime> dates)
+        {
             var updated = false;
             var cal = await GetCalendar(context.Scheduler);
             var exists = cal.ExcludedDates.ToList();
@@ -74,12 +114,12 @@ namespace QuartzminServer
                 }
             }
 
-            logger.Dispose();
             if (updated)
             {
                 await context.Scheduler.AddCalendar(CalendarName, cal, true, true);    
             }
         }
+
         public async Task Execute(IJobExecutionContext context)
         {
             var token = context.MergedJobDataMap.GetString("tushare_token");
@@ -90,6 +130,9 @@ namespace QuartzminServer
             {
                 case "update_cal":
                     await UpdateCal(context, tushare);
+                    break;
+                case "update_cal_year":
+                    await UpdateCalYear(context);
                     break;
                 default:
                     throw new Exception($" {action}");
