@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "Quartzmin"
+		},
+		{
+			"path": "Quartz.Plugins.RecentHistory"
+		},
+		{
+			"path": "Quartzmin.SelfHost"
+		},
+		{
+			"path": "QuartzminServer"
+		}
+	]
+}

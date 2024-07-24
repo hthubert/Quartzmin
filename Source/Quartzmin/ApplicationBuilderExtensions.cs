@@ -44,8 +44,6 @@ namespace Quartzmin
                     name: nameof(Quartzmin),
                     template: "{controller=Scheduler}/{action=Index}");
             });
-
-            //app.use
         }
 
         private static void UseFileServer(this IApplicationBuilder app, QuartzminOptions options)
